@@ -3,19 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bugnil-D-N-A PRO v1.2 FIXED</title>
+    <title>Bugnil-D-N-A PRO v1.3 FIXED</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #020205; color: #e2e8f0; font-family: sans-serif; overflow: hidden; -webkit-tap-highlight-color: transparent; }
         .app-header { background: linear-gradient(180deg, #1e1e38 0%, #080812 100%); border-bottom: 2px solid #3b82f6; text-shadow: 0 0 10px #3b82f6; }
-        .btn-3d { height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-weight: 900; transition: 0.1s; box-shadow: 2px 2px 4px rgba(0,0,0,0.6), inset 1px 1px 0px rgba(255,255,255,0.1); border: 1px solid rgba(0,0,0,0.4); cursor: pointer; }
+        
+        /* 🕹️ ปุ่ม 3D จิ๋ว 8 ปุ่มเท่ากัน */
+        .btn-3d { 
+            height: 42px; display: flex; align-items: center; justify-content: center; 
+            border-radius: 6px; font-weight: 900; transition: 0.1s; 
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.6), inset 1px 1px 0px rgba(255,255,255,0.1); 
+            border: 1px solid rgba(0,0,0,0.4); cursor: pointer; 
+        }
         .btn-3d:active { transform: translateY(1px); box-shadow: inset 2px 2px 4px rgba(0,0,0,0.8); }
         .btn-3d:disabled { opacity: 0.1; cursor: not-allowed; filter: grayscale(1); transform: none !important; }
         
-        .btn-p { background: linear-gradient(145deg, #2563eb, #1d4ed8); font-size: 20px; }
-        .btn-b { background: linear-gradient(145deg, #dc2626, #b91c1c); font-size: 20px; }
-        .btn-win { background: linear-gradient(145deg, #16a34a, #15803d); font-size: 10px; }
-        .btn-loss { background: linear-gradient(145deg, #b91c1c, #991b1b); font-size: 10px; }
+        .btn-p { background: linear-gradient(145deg, #2563eb, #1d4ed8); font-size: 20px; color: white; }
+        .btn-b { background: linear-gradient(145deg, #dc2626, #b91c1c); font-size: 20px; color: white; }
+        .btn-win { background: linear-gradient(145deg, #16a34a, #15803d); font-size: 11px; color: white; }
+        .btn-loss { background: linear-gradient(145deg, #b91c1c, #991b1b); font-size: 11px; color: white; }
         .btn-util { background: linear-gradient(145deg, #334155, #1e293b); color: #94a3b8; font-size: 9px; }
         .btn-reset { background: linear-gradient(145deg, #450a0a, #000000); color: #f87171; font-size: 9px; }
 
@@ -29,20 +36,21 @@
 </head>
 <body class="flex flex-col h-screen">
 
+    <!-- Modal เมื่อถึงเป้า -->
     <div id="goalModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-6 text-center">
         <div class="bg-[#111125] border-2 border-yellow-500 rounded-2xl p-8 shadow-[0_0_50px_rgba(234,179,8,0.3)] max-w-sm w-full">
             <div class="text-6xl mb-4">🏆</div>
             <h2 class="text-2xl font-black text-yellow-500 mb-2 italic uppercase">Mission Complete!</h2>
-            <p class="text-gray-400 text-sm mb-6 uppercase tracking-widest">ยินดีด้วย! คุณทำกำไรได้ถึงเป้าหมายแล้ว<br><span class="text-white font-bold">กรุณาหยุดเล่นทันทีเพื่อรักษาวินัย</span></p>
-            <button onclick="closeModal()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-lg uppercase">ปิดระบบ (Reset Money เพื่อเริ่มใหม่)</button>
+            <p class="text-gray-400 text-sm mb-6 uppercase tracking-widest">บรรลุเป้าหมายกำไรแล้ว!<br><span class="text-white font-bold">กรุณาหยุดพักและรักษาวินัย</span></p>
+            <button onclick="closeModal()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-lg uppercase">ปิดระบบชั่วคราว</button>
         </div>
     </div>
 
     <div class="app-header py-2 text-center">
-        <h1 class="text-indigo-400 font-black italic tracking-tighter text-xl">BUGNIL-D-N-A <span class="text-[8px] not-italic text-gray-500">PRO v1.2</span></h1>
+        <h1 class="text-indigo-400 font-black italic tracking-tighter text-xl uppercase">Bugnil-D-N-A <span class="text-[8px] not-italic text-gray-500">v1.3</span></h1>
     </div>
 
-    <!-- 💰 Dashboard -->
+    <!-- 💰 Financial Dashboard -->
     <div class="bg-[#080812] border-b border-gray-800 p-2 shadow-2xl">
         <div class="max-w-md mx-auto grid grid-cols-4 gap-1.5 text-center mb-3">
             <div class="bg-black/60 p-2 rounded-lg border border-gray-800">
@@ -58,25 +66,24 @@
                 <p id="pText" class="text-xl font-black text-white">0</p>
             </div>
             <div class="bg-black/60 p-2 rounded-lg border border-gray-800">
-                <p class="text-[8px] text-gray-500 font-bold uppercase mb-1">หน่วย</p>
+                <p class="text-[8px] text-gray-500 font-bold uppercase mb-1">หน่วยละ</p>
                 <input type="number" id="unitIn" value="100" oninput="updateFinance()" class="bg-transparent text-indigo-400 text-xl font-black w-full text-center outline-none">
             </div>
         </div>
         
-        <!-- 🎯 แถบแสดงเป้าหมายและไม้ถัดไป (ปรับปรุงใหม่ตามภาพ) -->
-        <div class="max-w-md mx-auto bg-indigo-500/10 p-4 rounded-xl border-2 border-indigo-500/30 flex justify-between items-center relative overflow-hidden">
-            <div class="flex flex-col z-10">
+        <div class="max-w-md mx-auto bg-indigo-500/10 p-4 rounded-xl border-2 border-indigo-500/30 flex justify-between items-center relative">
+            <div class="flex flex-col">
                 <span id="targetLabel" class="text-[10px] text-green-400 font-bold uppercase tracking-wider mb-1">เป้าหมาย 10%</span>
-                <span id="targetMoneyDisplay" class="text-4xl font-black text-white leading-none">100 <span class="text-xs text-gray-600 uppercase">บาท</span></span>
+                <span id="targetMoneyDisplay" class="text-4xl font-black text-white leading-none">100 <span class="text-[10px] text-gray-600 uppercase">บาท</span></span>
             </div>
             
             <div class="h-12 w-[1px] bg-gray-800"></div>
 
-            <div class="flex flex-col items-end z-10">
-                <span class="text-[10px] text-indigo-400 font-bold uppercase mb-1 italic">NEXT : 1-3-2-6</span>
+            <div class="flex flex-col items-end">
+                <span class="text-[10px] text-indigo-400 font-bold uppercase mb-1 italic tracking-tighter">BET : 1-3-2-6</span>
                 <div class="flex items-baseline gap-1">
-                    <span id="betMoney" class="text-5xl font-black text-indigo-500 tracking-tighter">100</span>
-                    <span id="unitStep" class="text-xs font-bold text-gray-600">(1u)</span>
+                    <span id="betMoney" class="text-5xl font-black text-indigo-500 tracking-tighter leading-none">100</span>
+                    <span id="unitStep" class="text-[10px] font-bold text-gray-600">(1u)</span>
                 </div>
                 <div id="stepDots" class="flex gap-2 mt-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-[0_0_10px_#6366f1]"></span>
@@ -88,7 +95,7 @@
         </div>
     </div>
 
-    <!-- 🎮 Controller -->
+    <!-- 🎮 8-Button Controller -->
     <div class="p-2 bg-[#05050a] border-b border-gray-800">
         <div class="max-w-md mx-auto">
             <div id="histBar" class="flex gap-1 overflow-x-auto mb-2 pb-1 border-b border-gray-900 min-h-[26px] items-center">
@@ -98,20 +105,20 @@
                 <div class="grid grid-cols-4 gap-2">
                     <button onclick="add('P')" class="btn-3d btn-p ctrl-btn">P</button>
                     <button onclick="add('B')" class="btn-3d btn-b ctrl-btn">B</button>
-                    <button onclick="undo()" class="btn-3d btn-util ctrl-btn">Undo</button>
-                    <button onclick="resetD()" class="btn-3d btn-reset ctrl-btn">RE-DNA</button>
+                    <button onclick="undo()" class="btn-3d btn-util ctrl-btn uppercase">Undo</button>
+                    <button onclick="resetD()" class="btn-3d btn-reset ctrl-btn uppercase">Re-DNA</button>
                 </div>
                 <div class="grid grid-cols-4 gap-2">
-                    <button onclick="manualM(true)" class="btn-3d btn-win ctrl-btn">Win</button>
-                    <button onclick="manualM(false)" class="btn-3d btn-loss ctrl-btn">Loss</button>
-                    <button onclick="resetM()" class="btn-3d btn-util uppercase text-indigo-400">RE-MONEY</button>
-                    <div class="bg-black/40 rounded flex items-center justify-center text-[10px] text-gray-700 font-bold border border-gray-900">V.1.2</div>
+                    <button onclick="manualM(true)" class="btn-3d btn-win ctrl-btn uppercase">Win</button>
+                    <button onclick="manualM(false)" class="btn-3d btn-loss ctrl-btn uppercase">Loss</button>
+                    <button onclick="resetM()" class="btn-3d btn-util uppercase text-indigo-400">Re-Money</button>
+                    <div class="bg-black/40 rounded flex items-center justify-center text-[10px] text-gray-700 font-bold border border-gray-900 uppercase italic">V.1.3</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="flex-1 overflow-y-auto p-2">
+    <div class="flex-1 overflow-y-auto p-2 bg-[#020205]">
         <div id="fSec" class="hidden"><div id="fCont" class="max-w-md mx-auto mb-2"></div></div>
         <div id="gCont" class="grid grid-cols-1 gap-2 max-w-md mx-auto pb-10"></div>
     </div>
@@ -122,7 +129,7 @@
         let profit = 0;
         let stepIdx = 0;
         let isLocked = false;
-        // ✅ เติมค่าที่หายไป
+        // ✅ เติมตัวเลขเดินเงินเรียบร้อยแล้ว
         const steps = [1, 3, 2, 6];
 
         const algos = Array.from({ length: 48 }, (_, i) => ({
@@ -132,17 +139,12 @@
 
         function add(val) {
             if (isLocked) return;
-            if (selectedId) {
-                const a = algos.find(x => x.id === selectedId);
-                processM(a.pred === val);
-            }
             history.push(val);
             analyze(); render(); updateFinance();
         }
 
-        function manualM(isWin) { if (isLocked) return; processM(isWin); updateFinance(); }
-
-        function processM(isWin) {
+        function manualM(isWin) { 
+            if (isLocked) return; 
             const unit = Math.floor(parseFloat(document.getElementById('unitIn').value) || 0);
             if (isWin) {
                 profit += (steps[stepIdx] * unit);
@@ -151,6 +153,7 @@
                 profit -= (steps[stepIdx] * unit);
                 stepIdx = 0;
             }
+            updateFinance(); 
         }
 
         function updateFinance() {
