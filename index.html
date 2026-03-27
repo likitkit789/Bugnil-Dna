@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bugnil-D-N-A PRO v1.3 FIXED</title>
+    <title>Bugnil-D-N-A PRO v1.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #020205; color: #e2e8f0; font-family: sans-serif; overflow: hidden; -webkit-tap-highlight-color: transparent; }
         .app-header { background: linear-gradient(180deg, #1e1e38 0%, #080812 100%); border-bottom: 2px solid #3b82f6; text-shadow: 0 0 10px #3b82f6; }
         
-        /* 🕹️ ปุ่ม 3D จิ๋ว 8 ปุ่มเท่ากัน */
         .btn-3d { 
             height: 42px; display: flex; align-items: center; justify-content: center; 
             border-radius: 6px; font-weight: 900; transition: 0.1s; 
@@ -17,7 +16,7 @@
             border: 1px solid rgba(0,0,0,0.4); cursor: pointer; 
         }
         .btn-3d:active { transform: translateY(1px); box-shadow: inset 2px 2px 4px rgba(0,0,0,0.8); }
-        .btn-3d:disabled { opacity: 0.1; cursor: not-allowed; filter: grayscale(1); transform: none !important; }
+        .btn-3d:disabled { opacity: 0.1; cursor: not-allowed; filter: grayscale(1); }
         
         .btn-p { background: linear-gradient(145deg, #2563eb, #1d4ed8); font-size: 20px; color: white; }
         .btn-b { background: linear-gradient(145deg, #dc2626, #b91c1c); font-size: 20px; color: white; }
@@ -36,21 +35,19 @@
 </head>
 <body class="flex flex-col h-screen">
 
-    <!-- Modal เมื่อถึงเป้า -->
     <div id="goalModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-6 text-center">
         <div class="bg-[#111125] border-2 border-yellow-500 rounded-2xl p-8 shadow-[0_0_50px_rgba(234,179,8,0.3)] max-w-sm w-full">
             <div class="text-6xl mb-4">🏆</div>
-            <h2 class="text-2xl font-black text-yellow-500 mb-2 italic uppercase">Mission Complete!</h2>
-            <p class="text-gray-400 text-sm mb-6 uppercase tracking-widest">บรรลุเป้าหมายกำไรแล้ว!<br><span class="text-white font-bold">กรุณาหยุดพักและรักษาวินัย</span></p>
+            <h2 class="text-2xl font-black text-yellow-500 mb-2 italic uppercase tracking-tighter">Mission Complete!</h2>
+            <p class="text-gray-400 text-sm mb-6 uppercase tracking-widest leading-relaxed">บรรลุเป้าหมายกำไรแล้ว!<br><span class="text-white font-bold">กรุณาหยุดพักและรักษาวินัย</span></p>
             <button onclick="closeModal()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-lg uppercase">ปิดระบบชั่วคราว</button>
         </div>
     </div>
 
     <div class="app-header py-2 text-center">
-        <h1 class="text-indigo-400 font-black italic tracking-tighter text-xl uppercase">Bugnil-D-N-A <span class="text-[8px] not-italic text-gray-500">v1.3</span></h1>
+        <h1 class="text-indigo-400 font-black italic tracking-tighter text-xl uppercase">Bugnil-D-N-A <span class="text-[8px] not-italic text-gray-500">v1.4</span></h1>
     </div>
 
-    <!-- 💰 Financial Dashboard -->
     <div class="bg-[#080812] border-b border-gray-800 p-2 shadow-2xl">
         <div class="max-w-md mx-auto grid grid-cols-4 gap-1.5 text-center mb-3">
             <div class="bg-black/60 p-2 rounded-lg border border-gray-800">
@@ -80,22 +77,19 @@
             <div class="h-12 w-[1px] bg-gray-800"></div>
 
             <div class="flex flex-col items-end">
-                <span class="text-[10px] text-indigo-400 font-bold uppercase mb-1 italic tracking-tighter">BET : 1-3-2-6</span>
+                <span id="stepLabel" class="text-[10px] text-indigo-400 font-bold uppercase mb-1 italic tracking-tighter">BET : ไม้ 1</span>
                 <div class="flex items-baseline gap-1">
                     <span id="betMoney" class="text-5xl font-black text-indigo-500 tracking-tighter leading-none">100</span>
                     <span id="unitStep" class="text-[10px] font-bold text-gray-600">(1u)</span>
                 </div>
-                <div id="stepDots" class="flex gap-2 mt-2">
+                <div id="stepVisual" class="flex gap-2 mt-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-[0_0_10px_#6366f1]"></span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-gray-800"></span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-gray-800"></span>
                     <span class="w-2.5 h-2.5 rounded-full bg-gray-800"></span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 🎮 8-Button Controller -->
     <div class="p-2 bg-[#05050a] border-b border-gray-800">
         <div class="max-w-md mx-auto">
             <div id="histBar" class="flex gap-1 overflow-x-auto mb-2 pb-1 border-b border-gray-900 min-h-[26px] items-center">
@@ -112,7 +106,7 @@
                     <button onclick="manualM(true)" class="btn-3d btn-win ctrl-btn uppercase">Win</button>
                     <button onclick="manualM(false)" class="btn-3d btn-loss ctrl-btn uppercase">Loss</button>
                     <button onclick="resetM()" class="btn-3d btn-util uppercase text-indigo-400">Re-Money</button>
-                    <div class="bg-black/40 rounded flex items-center justify-center text-[10px] text-gray-700 font-bold border border-gray-900 uppercase italic">V.1.3</div>
+                    <div class="bg-black/40 rounded flex items-center justify-center text-[10px] text-gray-700 font-bold border border-gray-900 uppercase italic">V.1.4</div>
                 </div>
             </div>
         </div>
@@ -127,10 +121,8 @@
         let history = [];
         let selectedId = null;
         let profit = 0;
-        let stepIdx = 0;
+        let currentStep = 1; // 1 หรือ 2
         let isLocked = false;
-        // ✅ เติมตัวเลขเดินเงินเรียบร้อยแล้ว
-        const steps = [1, 3, 2, 6];
 
         const algos = Array.from({ length: 48 }, (_, i) => ({
             id: `M${String(i + 1).padStart(2, '0')}`,
@@ -145,13 +137,17 @@
 
         function manualM(isWin) { 
             if (isLocked) return; 
-            const unit = Math.floor(parseFloat(document.getElementById('unitIn').value) || 0);
+            const unitValue = Math.floor(parseFloat(document.getElementById('unitIn').value) || 0);
+            
+            // ตรรกะเดินเงิน 2 ไม้
+            const betAmount = currentStep === 1 ? unitValue : unitValue * 2;
+            
             if (isWin) {
-                profit += (steps[stepIdx] * unit);
-                stepIdx = (stepIdx + 1) % 4;
+                profit += betAmount;
+                currentStep = 2; // ชนะไม้ 1 หรือ 2 ให้ไป/แช่ อยู่ที่ไม้ 2
             } else {
-                profit -= (steps[stepIdx] * unit);
-                stepIdx = 0;
+                profit -= betAmount;
+                currentStep = 1; // แพ้ให้กลับไปไม้ 1
             }
             updateFinance(); 
         }
@@ -160,7 +156,6 @@
             const cap = parseFloat(document.getElementById('capIn').value) || 0;
             const targetP = parseFloat(document.getElementById('targetPer').value) || 0;
             const unitValue = Math.floor(parseFloat(document.getElementById('unitIn').value) || 0);
-            const currentStepUnit = steps[stepIdx];
             const targetMoney = Math.floor(cap * targetP / 100);
 
             document.getElementById('pText').innerText = Math.floor(profit).toLocaleString();
@@ -169,11 +164,16 @@
             document.getElementById('targetLabel').innerText = `เป้าหมาย ${targetP}%`;
             document.getElementById('targetMoneyDisplay').innerHTML = `${targetMoney.toLocaleString()} <span class="text-[10px] text-gray-600 uppercase">บาท</span>`;
 
-            document.getElementById('betMoney').innerText = Math.floor(currentStepUnit * unitValue).toLocaleString();
-            document.getElementById('unitStep').innerText = `(${currentStepUnit}u)`;
+            // อัปเดตส่วนแสดงผลการเดิมพัน
+            const currentBet = currentStep === 1 ? unitValue : unitValue * 2;
+            document.getElementById('betMoney').innerText = currentBet.toLocaleString();
+            document.getElementById('unitStep').innerText = `(${currentStep === 1 ? '1' : '2'}u)`;
+            document.getElementById('stepLabel').innerText = `BET : ไม้ ${currentStep}`;
             
-            const dots = document.getElementById('stepDots').children;
-            for(let i=0; i<4; i++) dots[i].className = `w-2.5 h-2.5 rounded-full ${i === stepIdx ? 'bg-indigo-500 shadow-[0_0_10px_#6366f1]' : 'bg-gray-800'}`;
+            // อัปเดตจุดสถานะ
+            const dots = document.getElementById('stepVisual').children;
+            dots[0].className = `w-2.5 h-2.5 rounded-full ${currentStep === 1 ? 'bg-indigo-500 shadow-[0_0_10px_#6366f1]' : 'bg-gray-800'}`;
+            dots[1].className = `w-2.5 h-2.5 rounded-full ${currentStep === 2 ? 'bg-indigo-500 shadow-[0_0_10px_#6366f1]' : 'bg-gray-800'}`;
 
             if (profit >= targetMoney && targetMoney > 0 && !isLocked) { lockSystem(); }
         }
@@ -188,7 +188,7 @@
 
         function resetM() {
             if(confirm("ล้างสถิติกำไรและปลดล็อคระบบ?")) {
-                profit = 0; stepIdx = 0; isLocked = false;
+                profit = 0; currentStep = 1; isLocked = false;
                 document.querySelectorAll('.ctrl-btn').forEach(b => b.disabled = false);
                 updateFinance();
             }
@@ -229,7 +229,7 @@
                 const card = document.createElement('div');
                 card.className = `card ${a.id === selectedId ? 'card-selected' : ''}`;
                 card.onclick = () => { selectedId = (selectedId === a.id ? null : a.id); render(); updateFinance(); };
-                card.innerHTML = `<div class="px-2 py-0.5 text-[8px] font-bold flex justify-between bg-black/50 border-b border-gray-800"><span>${a.id}</span><span>${a.winRate}%</span></div>
+                card.innerHTML = `<div class="px-2 py-0.5 text-[8px] font-bold flex justify-between bg-black/50 border-b border-gray-800 uppercase"><span>${a.id}</span><span>${a.winRate}%</span></div>
                     <div class="p-2 flex items-center gap-4">
                         <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black ${a.pred === 'P' ? 'bg-blue-600' : 'bg-red-600'}">${a.pred}</div>
                         <div class="flex flex-wrap gap-1 leading-none">${a.results.map(r => `<span class="${r === '✅' ? 'dot-w' : 'dot-l'}">${r}</span>`).join('') || '...'}</div>
