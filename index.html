@@ -3,247 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bugnil-D-N-A PRO v1.4</title>
+    <title>Baccarat DNA 256 Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #020205; color: #e2e8f0; font-family: sans-serif; overflow: hidden; -webkit-tap-highlight-color: transparent; }
-        .app-header { background: linear-gradient(180deg, #1e1e38 0%, #080812 100%); border-bottom: 2px solid #3b82f6; text-shadow: 0 0 10px #3b82f6; }
-        
-        .btn-3d { 
-            height: 42px; display: flex; align-items: center; justify-content: center; 
-            border-radius: 6px; font-weight: 900; transition: 0.1s; 
-            box-shadow: 2px 2px 4px rgba(0,0,0,0.6), inset 1px 1px 0px rgba(255,255,255,0.1); 
-            border: 1px solid rgba(0,0,0,0.4); cursor: pointer; 
+        .dna-card { transition: all 0.3s ease; }
+        .win { color: #10b981; }
+        .loss { color: #ef4444; }
+        /* DNA 15px และเลื่อนข้างได้ */
+        #dnaContainer {
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            padding: 10px;
+            scroll-behavior: smooth;
+            white-space: nowrap;
+            align-items: center;
         }
-        .btn-3d:active { transform: translateY(1px); box-shadow: inset 2px 2px 4px rgba(0,0,0,0.8); }
-        .btn-3d:disabled { opacity: 0.1; cursor: not-allowed; filter: grayscale(1); }
+        #dnaContainer::-webkit-scrollbar { height: 3px; }
+        #dnaContainer::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
+        .dna-item { font-size: 15px; font-weight: bold; flex-shrink: 0; }
         
-        .btn-p { background: linear-gradient(145deg, #2563eb, #1d4ed8); font-size: 20px; color: white; }
-        .btn-b { background: linear-gradient(145deg, #dc2626, #b91c1c); font-size: 20px; color: white; }
-        .btn-win { background: linear-gradient(145deg, #16a34a, #15803d); font-size: 11px; color: white; }
-        .btn-loss { background: linear-gradient(145deg, #b91c1c, #991b1b); font-size: 11px; color: white; }
-        .btn-util { background: linear-gradient(145deg, #334155, #1e293b); color: #94a3b8; font-size: 9px; }
-        .btn-reset { background: linear-gradient(145deg, #450a0a, #000000); color: #f87171; font-size: 9px; }
-
-        .dot-w { color: #4ade80; font-weight: bold; font-size: 16px; } 
-        .dot-l { color: #f87171; font-weight: bold; font-size: 16px; }
-        .card { border-radius: 6px; background: #0c0c1d; border: 1px solid #1e1e38; cursor: pointer; }
-        .card-selected { border: 2px solid #fbbf24 !important; }
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        #goalModal { background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); }
+        /* ปุ่มทั้งหมดตัวหนังสือ 17px และขนาดสมดุลกัน */
+        .btn-17 { 
+            font-size: 17px; 
+            font-weight: bold; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            height: 60px; /* ปรับความสูงให้เท่ากันหมด */
+        }
     </style>
 </head>
-<body class="flex flex-col h-screen">
-
-    <div id="goalModal" class="fixed inset-0 z-50 flex items-center justify-center hidden p-6 text-center">
-        <div class="bg-[#111125] border-2 border-yellow-500 rounded-2xl p-8 shadow-[0_0_50px_rgba(234,179,8,0.3)] max-w-sm w-full">
-            <div class="text-6xl mb-4">🏆</div>
-            <h2 class="text-2xl font-black text-yellow-500 mb-2 italic uppercase tracking-tighter">Mission Complete!</h2>
-            <p class="text-gray-400 text-sm mb-6 uppercase tracking-widest leading-relaxed">บรรลุเป้าหมายกำไรแล้ว!<br><span class="text-white font-bold">กรุณาหยุดพักและรักษาวินัย</span></p>
-            <button onclick="closeModal()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-lg uppercase">ปิดระบบชั่วคราว</button>
+<body class="bg-gray-900 text-gray-100 min-h-screen p-2 md:p-8">
+    <div class="max-w-md mx-auto">
+        <!-- Header (ย่อกะทัดรัดสำหรับมือถือ) -->
+        <div class="flex justify-between items-center mb-4 px-1">
+            <h1 class="text-xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent italic">
+                BACCARAT DNA 256
+            </h1>
+            <p class="text-[10px] text-green-400 font-mono tracking-widest">LIVE</p>
         </div>
-    </div>
 
-    <div class="app-header py-2 text-center">
-        <h1 class="text-indigo-400 font-black italic tracking-tighter text-xl uppercase">Bugnil-D-N-A <span class="text-[8px] not-italic text-gray-500">v1.4</span></h1>
-    </div>
-
-    <div class="bg-[#080812] border-b border-gray-800 p-2 shadow-2xl">
-        <div class="max-w-md mx-auto grid grid-cols-4 gap-1.5 text-center mb-3">
-            <div class="bg-black/60 p-2 rounded-lg border border-gray-800">
-                <p class="text-[8px] text-gray-500 font-bold uppercase mb-1">ทุน</p>
-                <input type="number" id="capIn" value="1000" oninput="updateFinance()" class="bg-transparent text-yellow-500 text-xl font-black w-full text-center outline-none">
+        <!-- Stats Grid (Compact) -->
+        <div class="grid grid-cols-3 gap-2 mb-4">
+            <div class="bg-gray-800 p-2 rounded-xl border border-gray-700 text-center shadow-lg">
+                <p class="text-gray-500 text-[9px] uppercase">Win Rate</p>
+                <p id="winRate" class="text-base font-bold text-yellow-500">0%</p>
             </div>
-            <div class="bg-black/60 p-2 rounded-lg border border-gray-800">
-                <p class="text-[8px] text-gray-500 font-bold uppercase mb-1">เป้า %</p>
-                <input type="number" id="targetPer" value="10" oninput="updateFinance()" class="bg-transparent text-green-400 text-xl font-black w-full text-center outline-none">
+            <div class="bg-gray-800 p-2 rounded-xl border border-gray-700 text-center shadow-lg">
+                <p class="text-gray-500 text-[9px] uppercase">Max Loss</p>
+                <p id="conLoss" class="text-base font-bold text-red-500">0</p>
             </div>
-            <div class="bg-black/60 p-2 rounded-lg border border-gray-800">
-                <p class="text-[8px] text-gray-500 font-bold uppercase mb-1 text-red-400">กำไร</p>
-                <p id="pText" class="text-xl font-black text-white">0</p>
-            </div>
-            <div class="bg-black/60 p-2 rounded-lg border border-gray-800">
-                <p class="text-[8px] text-gray-500 font-bold uppercase mb-1">หน่วยละ</p>
-                <input type="number" id="unitIn" value="100" oninput="updateFinance()" class="bg-transparent text-indigo-400 text-xl font-black w-full text-center outline-none">
+            <div class="bg-gray-800 p-2 rounded-xl border border-gray-700 text-center shadow-lg">
+                <p class="text-gray-500 text-[9px] uppercase">Index</p>
+                <p id="patternIdx" class="text-base font-bold text-blue-500">0/256</p>
             </div>
         </div>
-        
-        <div class="max-w-md mx-auto bg-indigo-500/10 p-4 rounded-xl border-2 border-indigo-500/30 flex justify-between items-center relative">
-            <div class="flex flex-col">
-                <span id="targetLabel" class="text-[10px] text-green-400 font-bold uppercase tracking-wider mb-1">เป้าหมาย 10%</span>
-                <span id="targetMoneyDisplay" class="text-4xl font-black text-white leading-none">100 <span class="text-[10px] text-gray-600 uppercase">บาท</span></span>
+
+        <!-- DNA Table (แถวเดียว 15px) -->
+        <div class="bg-gray-800 p-3 rounded-2xl border border-gray-700 mb-4 shadow-xl">
+            <h2 class="text-[10px] font-semibold mb-2 text-gray-400 uppercase tracking-widest italic">🧬 DNA Sequence</h2>
+            <div id="dnaContainer" class="bg-gray-900/50 rounded-lg min-h-[45px]">
+                <p class="text-gray-600 italic text-[10px] w-full text-center">Waiting for data...</p>
+            </div>
+        </div>
+
+        <!-- Advice Section -->
+        <div class="bg-gray-800 p-3 rounded-2xl border border-yellow-600/20 mb-4 flex justify-between items-center px-4">
+            <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Next:</p>
+            <p id="nextBet" class="text-lg font-black text-yellow-400 uppercase tracking-widest">-</p>
+            <p id="betReason" class="text-[9px] text-gray-500 italic">รอ 3 ตาแรก</p>
+        </div>
+
+        <!-- Input & Control Buttons (17px All) -->
+        <div class="space-y-2">
+            <div class="grid grid-cols-2 gap-3">
+                <!-- สลับ P ซ้าย B ขวา -->
+                <button onclick="addResult('P')" class="btn-17 bg-blue-600 hover:bg-blue-500 rounded-xl shadow-lg active:scale-95 transition-all shadow-blue-900/30">
+                    PLAYER (P)
+                </button>
+                <button onclick="addResult('B')" class="btn-17 bg-red-600 hover:bg-red-700 rounded-xl shadow-lg active:scale-95 transition-all shadow-red-900/30">
+                    BANKER (B)
+                </button>
             </div>
             
-            <div class="h-12 w-[1px] bg-gray-800"></div>
-
-            <div class="flex flex-col items-end">
-                <span id="stepLabel" class="text-[10px] text-indigo-400 font-bold uppercase mb-1 italic tracking-tighter">BET : ไม้ 1</span>
-                <div class="flex items-baseline gap-1">
-                    <span id="betMoney" class="text-5xl font-black text-indigo-500 tracking-tighter leading-none">100</span>
-                    <span id="unitStep" class="text-[10px] font-bold text-gray-600">(1u)</span>
-                </div>
-                <div id="stepVisual" class="flex gap-2 mt-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-[0_0_10px_#6366f1]"></span>
-                    <span class="w-2.5 h-2.5 rounded-full bg-gray-800"></span>
-                </div>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="undoLast()" class="btn-17 bg-gray-700 hover:bg-gray-600 rounded-xl text-gray-300 shadow-md active:scale-95">
+                    UNDO ย้อนกลับ
+                </button>
+                <button onclick="resetData()" class="btn-17 bg-gray-800 hover:text-red-500 rounded-xl text-gray-500 shadow-md active:scale-95">
+                    RESET ล้างค่า
+                </button>
             </div>
         </div>
-    </div>
-
-    <div class="p-2 bg-[#05050a] border-b border-gray-800">
-        <div class="max-w-md mx-auto">
-            <div id="histBar" class="flex gap-1 overflow-x-auto mb-2 pb-1 border-b border-gray-900 min-h-[26px] items-center">
-                <span class="text-gray-800 text-[9px] italic uppercase tracking-widest">Waiting...</span>
-            </div>
-            <div class="flex flex-col gap-2">
-                <div class="grid grid-cols-4 gap-2">
-                    <button onclick="add('P')" class="btn-3d btn-p ctrl-btn">P</button>
-                    <button onclick="add('B')" class="btn-3d btn-b ctrl-btn">B</button>
-                    <button onclick="undo()" class="btn-3d btn-util ctrl-btn uppercase">Undo</button>
-                    <button onclick="resetD()" class="btn-3d btn-reset ctrl-btn uppercase">Re-DNA</button>
-                </div>
-                <div class="grid grid-cols-4 gap-2">
-                    <button onclick="manualM(true)" class="btn-3d btn-win ctrl-btn uppercase">Win</button>
-                    <button onclick="manualM(false)" class="btn-3d btn-loss ctrl-btn uppercase">Loss</button>
-                    <button onclick="resetM()" class="btn-3d btn-util uppercase text-indigo-400">Re-Money</button>
-                    <div class="bg-black/40 rounded flex items-center justify-center text-[10px] text-gray-700 font-bold border border-gray-900 uppercase italic">V.1.4</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="flex-1 overflow-y-auto p-2 bg-[#020205]">
-        <div id="fSec" class="hidden"><div id="fCont" class="max-w-md mx-auto mb-2"></div></div>
-        <div id="gCont" class="grid grid-cols-1 gap-2 max-w-md mx-auto pb-10"></div>
     </div>
 
     <script>
         let history = [];
-        let selectedId = null;
-        let profit = 0;
-        let currentStep = 1; // 1 หรือ 2
-        let isLocked = false;
+        const getPrediction = () => (history.length % 2 === 0 ? 'P' : 'B');
 
-        const algos = Array.from({ length: 48 }, (_, i) => ({
-            id: `M${String(i + 1).padStart(2, '0')}`,
-            seed: i % 4, results: [], winRate: 0, pred: ''
-        }));
-
-        function add(val) {
-            if (isLocked) return;
-            history.push(val);
-            analyze(); render(); updateFinance();
+        function addResult(result) {
+            const pred = getPrediction();
+            const isWin = (result === pred);
+            history.push({ result, pred, isWin });
+            updateUI();
         }
 
-        function manualM(isWin) { 
-            if (isLocked) return; 
-            const unitValue = Math.floor(parseFloat(document.getElementById('unitIn').value) || 0);
-            
-            // ตรรกะเดินเงิน 2 ไม้
-            const betAmount = currentStep === 1 ? unitValue : unitValue * 2;
-            
-            if (isWin) {
-                profit += betAmount;
-                currentStep = 2; // ชนะไม้ 1 หรือ 2 ให้ไป/แช่ อยู่ที่ไม้ 2
-            } else {
-                profit -= betAmount;
-                currentStep = 1; // แพ้ให้กลับไปไม้ 1
-            }
-            updateFinance(); 
-        }
-
-        function updateFinance() {
-            const cap = parseFloat(document.getElementById('capIn').value) || 0;
-            const targetP = parseFloat(document.getElementById('targetPer').value) || 0;
-            const unitValue = Math.floor(parseFloat(document.getElementById('unitIn').value) || 0);
-            const targetMoney = Math.floor(cap * targetP / 100);
-
-            document.getElementById('pText').innerText = Math.floor(profit).toLocaleString();
-            document.getElementById('pText').className = `text-xl font-black ${profit >= 0 ? 'text-green-400' : 'text-red-400'}`;
-            
-            document.getElementById('targetLabel').innerText = `เป้าหมาย ${targetP}%`;
-            document.getElementById('targetMoneyDisplay').innerHTML = `${targetMoney.toLocaleString()} <span class="text-[10px] text-gray-600 uppercase">บาท</span>`;
-
-            // อัปเดตส่วนแสดงผลการเดิมพัน
-            const currentBet = currentStep === 1 ? unitValue : unitValue * 2;
-            document.getElementById('betMoney').innerText = currentBet.toLocaleString();
-            document.getElementById('unitStep').innerText = `(${currentStep === 1 ? '1' : '2'}u)`;
-            document.getElementById('stepLabel').innerText = `BET : ไม้ ${currentStep}`;
-            
-            // อัปเดตจุดสถานะ
-            const dots = document.getElementById('stepVisual').children;
-            dots[0].className = `w-2.5 h-2.5 rounded-full ${currentStep === 1 ? 'bg-indigo-500 shadow-[0_0_10px_#6366f1]' : 'bg-gray-800'}`;
-            dots[1].className = `w-2.5 h-2.5 rounded-full ${currentStep === 2 ? 'bg-indigo-500 shadow-[0_0_10px_#6366f1]' : 'bg-gray-800'}`;
-
-            if (profit >= targetMoney && targetMoney > 0 && !isLocked) { lockSystem(); }
-        }
-
-        function lockSystem() {
-            isLocked = true;
-            document.getElementById('goalModal').classList.remove('hidden');
-            document.querySelectorAll('.ctrl-btn').forEach(b => b.disabled = true);
-        }
-
-        function closeModal() { document.getElementById('goalModal').classList.add('hidden'); }
-
-        function resetM() {
-            if(confirm("ล้างสถิติกำไรและปลดล็อคระบบ?")) {
-                profit = 0; currentStep = 1; isLocked = false;
-                document.querySelectorAll('.ctrl-btn').forEach(b => b.disabled = false);
-                updateFinance();
+        function undoLast() {
+            if (history.length > 0) {
+                history.pop();
+                updateUI();
             }
         }
 
-        function getPred(algo, hist) {
-            if (hist.length === 0) return 'P';
-            const last = hist[hist.length - 1];
-            if (algo.seed === 0) return last;
-            if (algo.seed === 1) return last === 'P' ? 'B' : 'P';
-            if (algo.seed === 2) return (hist.length % 2 === 0) ? 'P' : 'B';
-            return (parseInt(algo.id.slice(1)) + hist.length) % 3 === 0 ? 'B' : 'P';
-        }
+        function updateUI() {
+            const container = document.getElementById('dnaContainer');
+            container.innerHTML = '';
+            
+            if (history.length === 0) {
+                container.innerHTML = '<p class="text-gray-600 italic text-[10px] w-full text-center">Waiting for data...</p>';
+            }
 
-        function analyze() {
-            algos.forEach(a => {
-                let res = [];
-                for (let i = 1; i < history.length; i++) {
-                    const p = getPred(a, history.slice(0, i));
-                    res.push(p === history[i] ? '✅' : '❌');
+            let wins = 0;
+            let currentLossStreak = 0;
+            let maxLossStreak = 0;
+
+            history.forEach(item => {
+                const span = document.createElement('span');
+                span.className = item.isWin ? 'win dna-item' : 'loss dna-item';
+                span.innerText = item.isWin ? '✔️' : '❌';
+                container.appendChild(span);
+
+                if (item.isWin) {
+                    wins++;
+                    currentLossStreak = 0;
+                } else {
+                    currentLossStreak++;
+                    if (currentLossStreak > maxLossStreak) maxLossStreak = currentLossStreak;
                 }
-                a.results = res.slice(-12);
-                const wins = a.results.filter(r => r === '✅').length;
-                a.winRate = Math.round((wins / a.results.length) * 100) || 0;
-                a.pred = getPred(a, history);
             });
+
+            // เลื่อนไปตัวล่าสุดอัตโนมัติ
+            container.scrollLeft = container.scrollWidth;
+
+            // Stats Update
+            const rate = history.length > 0 ? Math.round((wins / history.length) * 100) : 0;
+            document.getElementById('winRate').innerText = rate + '%';
+            document.getElementById('conLoss').innerText = maxLossStreak;
+            document.getElementById('patternIdx').innerText = (history.length % 256) + '/256';
+
+            // Advice Update
+            const nextBet = document.getElementById('nextBet');
+            const betReason = document.getElementById('betReason');
+            const side = (history.length % 2 === 0 ? 'PLAYER' : 'BANKER');
+
+            if (history.length < 3) {
+                nextBet.innerText = "-";
+                betReason.innerText = "รอ 3 ตาแรก";
+            } else {
+                nextBet.innerText = side;
+                nextBet.className = `text-lg font-black tracking-widest ${side === 'PLAYER' ? 'text-blue-400' : 'text-red-400'}`;
+                const last3 = history.slice(-3).map(h => h.isWin);
+                betReason.innerText = last3.every(v => v === false) ? "🔥 สวนสูตร!" : "ตามสูตรปกติ";
+            }
         }
 
-        function render() {
-            const grid = document.getElementById('gCont');
-            const focus = document.getElementById('fCont');
-            const bar = document.getElementById('histBar');
-            grid.innerHTML = ''; focus.innerHTML = '';
-            bar.innerHTML = history.length ? history.map(h => `<div class="history-item h-${h.toLowerCase()}">${h}</div>`).join('') : '<span class="text-gray-800 text-[9px] italic uppercase tracking-widest">Waiting...</span>';
-            bar.scrollLeft = bar.scrollWidth;
-
-            [...algos].sort((a,b) => b.winRate - a.winRate).forEach(a => {
-                const card = document.createElement('div');
-                card.className = `card ${a.id === selectedId ? 'card-selected' : ''}`;
-                card.onclick = () => { selectedId = (selectedId === a.id ? null : a.id); render(); updateFinance(); };
-                card.innerHTML = `<div class="px-2 py-0.5 text-[8px] font-bold flex justify-between bg-black/50 border-b border-gray-800 uppercase"><span>${a.id}</span><span>${a.winRate}%</span></div>
-                    <div class="p-2 flex items-center gap-4">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black ${a.pred === 'P' ? 'bg-blue-600' : 'bg-red-600'}">${a.pred}</div>
-                        <div class="flex flex-wrap gap-1 leading-none">${a.results.map(r => `<span class="${r === '✅' ? 'dot-w' : 'dot-l'}">${r}</span>`).join('') || '...'}</div>
-                    </div>`;
-                if (a.id === selectedId) { document.getElementById('fSec').classList.remove('hidden'); focus.appendChild(card); }
-                else if (a.winRate >= 55) grid.appendChild(card);
-            });
-            if (!selectedId) document.getElementById('fSec').classList.add('hidden');
+        function resetData() {
+            if (confirm("ล้างข้อมูลทั้งหมด?")) {
+                history = [];
+                updateUI();
+            }
         }
-
-        function undo() { if (isLocked) return; history.pop(); analyze(); render(); updateFinance(); }
-        function resetD() { if (isLocked) return; if(confirm("ล้างสถิติไพ่?")) { history=[]; selectedId=null; analyze(); render(); } }
-
-        analyze(); render(); updateFinance();
     </script>
 </body>
 </html>
