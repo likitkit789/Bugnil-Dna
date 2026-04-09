@@ -11,41 +11,35 @@
         .loss { color: #ef4444; }
         /* DNA 15px และเลื่อนข้างได้ */
         #dnaContainer {
-            display: flex;
-            gap: 4px;
-            overflow-x: auto;
-            padding: 10px;
-            scroll-behavior: smooth;
-            white-space: nowrap;
-            align-items: center;
+            display: flex; gap: 4px; overflow-x: auto; padding: 10px;
+            scroll-behavior: smooth; white-space: nowrap; align-items: center;
         }
         #dnaContainer::-webkit-scrollbar { height: 3px; }
         #dnaContainer::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
         .dna-item { font-size: 15px; font-weight: bold; flex-shrink: 0; }
         
         /* ปุ่มทั้งหมดตัวหนังสือ 17px และขนาดสมดุลกัน */
-        .btn-17 { 
-            font-size: 17px; 
-            font-weight: bold; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            height: 60px; /* ปรับความสูงให้เท่ากันหมด */
+        .btn-style { 
+            font-size: 17px; font-weight: bold; 
+            display: flex; align-items: center; justify-content: center;
+            height: 55px; width: 100%;
         }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen p-2 md:p-8">
     <div class="max-w-md mx-auto">
-        <!-- Header (ย่อกะทัดรัดสำหรับมือถือ) -->
-        <div class="flex justify-between items-center mb-4 px-1">
-            <h1 class="text-xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent italic">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6 px-1">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
                 BACCARAT DNA 256
             </h1>
-            <p class="text-[10px] text-green-400 font-mono tracking-widest">LIVE</p>
+            <div class="text-right">
+                <p class="text-[10px] text-green-400 font-mono tracking-widest">LIVE LOG</p>
+            </div>
         </div>
 
         <!-- Stats Grid (Compact) -->
-        <div class="grid grid-cols-3 gap-2 mb-4">
+        <div class="grid grid-cols-3 gap-2 mb-6">
             <div class="bg-gray-800 p-2 rounded-xl border border-gray-700 text-center shadow-lg">
                 <p class="text-gray-500 text-[9px] uppercase">Win Rate</p>
                 <p id="winRate" class="text-base font-bold text-yellow-500">0%</p>
@@ -60,52 +54,54 @@
             </div>
         </div>
 
-        <!-- DNA Table (แถวเดียว 15px) -->
-        <div class="bg-gray-800 p-3 rounded-2xl border border-gray-700 mb-4 shadow-xl">
+        <!-- DNA Table (15px) -->
+        <div class="bg-gray-800 p-3 rounded-2xl border border-gray-700 mb-6 shadow-xl">
             <h2 class="text-[10px] font-semibold mb-2 text-gray-400 uppercase tracking-widest italic">🧬 DNA Sequence</h2>
             <div id="dnaContainer" class="bg-gray-900/50 rounded-lg min-h-[45px]">
                 <p class="text-gray-600 italic text-[10px] w-full text-center">Waiting for data...</p>
             </div>
         </div>
 
-        <!-- Advice Section -->
-        <div class="bg-gray-800 p-3 rounded-2xl border border-yellow-600/20 mb-4 flex justify-between items-center px-4">
-            <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Next:</p>
-            <p id="nextBet" class="text-lg font-black text-yellow-400 uppercase tracking-widest">-</p>
-            <p id="betReason" class="text-[9px] text-gray-500 italic">รอ 3 ตาแรก</p>
+        <!-- Advice Box -->
+        <div class="bg-gray-800 p-4 rounded-2xl border border-yellow-600/20 mb-6 flex justify-between items-center px-6 shadow-lg shadow-yellow-900/10">
+            <div class="text-left">
+                <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Next:</p>
+                <p id="nextBet" class="text-xl font-black text-yellow-400 uppercase tracking-widest">-</p>
+            </div>
+            <p id="betReason" class="text-[10px] text-gray-500 italic">รอ 3 ตาแรก</p>
         </div>
 
-        <!-- Input & Control Buttons (17px All) -->
-        <div class="space-y-2">
+        <!-- Input & Control Buttons (17px) -->
+        <div class="space-y-3 mb-8">
             <div class="grid grid-cols-2 gap-3">
-                <!-- สลับ P ซ้าย B ขวา -->
-                <button onclick="addResult('P')" class="btn-17 bg-blue-600 hover:bg-blue-500 rounded-xl shadow-lg active:scale-95 transition-all shadow-blue-900/30">
-                    PLAYER (P)
-                </button>
-                <button onclick="addResult('B')" class="btn-17 bg-red-600 hover:bg-red-700 rounded-xl shadow-lg active:scale-95 transition-all shadow-red-900/30">
-                    BANKER (B)
-                </button>
+                <button onclick="addResult('P')" class="btn-style bg-blue-600 hover:bg-blue-500 rounded-xl shadow-lg active:scale-95 transition-all">PLAYER (P)</button>
+                <button onclick="addResult('B')" class="btn-style bg-red-600 hover:bg-red-700 rounded-xl shadow-lg active:scale-95 transition-all">BANKER (B)</button>
             </div>
-            
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="undoLast()" class="btn-17 bg-gray-700 hover:bg-gray-600 rounded-xl text-gray-300 shadow-md active:scale-95">
-                    UNDO ย้อนกลับ
-                </button>
-                <button onclick="resetData()" class="btn-17 bg-gray-800 hover:text-red-500 rounded-xl text-gray-500 shadow-md active:scale-95">
-                    RESET ล้างค่า
-                </button>
+                <button onclick="undoLast()" class="btn-style bg-gray-700 hover:bg-gray-600 rounded-xl text-gray-300">UNDO ย้อนหลัง</button>
+                <button onclick="resetData()" class="btn-style bg-gray-800 hover:text-red-500 rounded-xl text-gray-500">RESET ล้างค่า</button>
+            </div>
+        </div>
+
+        <!-- History Log (Last 10) -->
+        <div class="bg-gray-800/50 rounded-2xl border border-gray-700 p-4">
+            <h3 class="text-[10px] font-bold text-gray-400 uppercase mb-3 tracking-widest border-b border-gray-700 pb-1">
+                History Log (Last 10)
+            </h3>
+            <div id="historyLog" class="space-y-2 text-[11px]">
+                <p class="text-center text-gray-600 italic py-2">No history available</p>
             </div>
         </div>
     </div>
 
     <script>
         let history = [];
+        // สูตรจำลอง (สามารถปรับเปลี่ยนได้)
         const getPrediction = () => (history.length % 2 === 0 ? 'P' : 'B');
 
         function addResult(result) {
             const pred = getPrediction();
-            const isWin = (result === pred);
-            history.push({ result, pred, isWin });
+            history.push({ result, pred, isWin: result === pred });
             updateUI();
         }
 
@@ -118,61 +114,60 @@
 
         function updateUI() {
             const container = document.getElementById('dnaContainer');
-            container.innerHTML = '';
+            container.innerHTML = history.length === 0 ? '<p class="text-gray-600 italic text-[10px] w-full text-center">Waiting for data...</p>' : '';
             
-            if (history.length === 0) {
-                container.innerHTML = '<p class="text-gray-600 italic text-[10px] w-full text-center">Waiting for data...</p>';
-            }
-
-            let wins = 0;
-            let currentLossStreak = 0;
-            let maxLossStreak = 0;
+            let wins = 0, curL = 0, maxL = 0;
 
             history.forEach(item => {
                 const span = document.createElement('span');
                 span.className = item.isWin ? 'win dna-item' : 'loss dna-item';
                 span.innerText = item.isWin ? '✔️' : '❌';
                 container.appendChild(span);
-
-                if (item.isWin) {
-                    wins++;
-                    currentLossStreak = 0;
-                } else {
-                    currentLossStreak++;
-                    if (currentLossStreak > maxLossStreak) maxLossStreak = currentLossStreak;
-                }
+                if (item.isWin) { wins++; curL = 0; } 
+                else { curL++; if (curL > maxL) maxL = curL; }
             });
-
-            // เลื่อนไปตัวล่าสุดอัตโนมัติ
             container.scrollLeft = container.scrollWidth;
 
-            // Stats Update
-            const rate = history.length > 0 ? Math.round((wins / history.length) * 100) : 0;
-            document.getElementById('winRate').innerText = rate + '%';
-            document.getElementById('conLoss').innerText = maxLossStreak;
+            // Stats
+            document.getElementById('winRate').innerText = history.length > 0 ? Math.round((wins / history.length) * 100) + '%' : '0%';
+            document.getElementById('conLoss').innerText = maxL;
             document.getElementById('patternIdx').innerText = (history.length % 256) + '/256';
 
-            // Advice Update
+            // Advice
+            const nextSide = getPrediction() === 'P' ? 'PLAYER' : 'BANKER';
             const nextBet = document.getElementById('nextBet');
             const betReason = document.getElementById('betReason');
-            const side = (history.length % 2 === 0 ? 'PLAYER' : 'BANKER');
 
             if (history.length < 3) {
                 nextBet.innerText = "-";
                 betReason.innerText = "รอ 3 ตาแรก";
             } else {
-                nextBet.innerText = side;
-                nextBet.className = `text-lg font-black tracking-widest ${side === 'PLAYER' ? 'text-blue-400' : 'text-red-400'}`;
+                nextBet.innerText = nextSide;
+                nextBet.className = `text-xl font-black ${nextSide === 'PLAYER' ? 'text-blue-400' : 'text-red-400'}`;
                 const last3 = history.slice(-3).map(h => h.isWin);
                 betReason.innerText = last3.every(v => v === false) ? "🔥 สวนสูตร!" : "ตามสูตรปกติ";
             }
+
+            // Log Update
+            const logBox = document.getElementById('historyLog');
+            logBox.innerHTML = '';
+            const recent = [...history].reverse().slice(0, 10);
+            recent.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between border-b border-gray-800/50 pb-1";
+                div.innerHTML = `
+                    <span class="text-gray-500">#${history.length - index}</span>
+                    <span class="font-bold ${item.result === 'P' ? 'text-blue-400' : 'text-red-400'}">ออก: ${item.result}</span>
+                    <span class="text-gray-400">ทาย: ${item.pred}</span>
+                    <span class="${item.isWin ? 'text-green-500' : 'text-red-500'} font-bold">${item.isWin ? 'WIN' : 'LOSS'}</span>
+                `;
+                logBox.appendChild(div);
+            });
+            if (history.length === 0) logBox.innerHTML = '<p class="text-center text-gray-600 italic py-2">No history available</p>';
         }
 
         function resetData() {
-            if (confirm("ล้างข้อมูลทั้งหมด?")) {
-                history = [];
-                updateUI();
-            }
+            if (confirm("ล้างสถิติทั้งหมด?")) { history = []; updateUI(); }
         }
     </script>
 </body>
