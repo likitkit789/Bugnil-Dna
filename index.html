@@ -9,7 +9,6 @@
         .dna-card { transition: all 0.3s ease; }
         .win { color: #10b981; }
         .loss { color: #ef4444; }
-        /* DNA 15px และเลื่อนข้าง */
         #dnaContainer {
             display: flex; gap: 4px; overflow-x: auto; padding: 10px;
             scroll-behavior: smooth; white-space: nowrap; align-items: center;
@@ -18,18 +17,27 @@
         #dnaContainer::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
         .dna-item { font-size: 15px; font-weight: bold; flex-shrink: 0; }
         
-        /* ปุ่มทั้งหมดตัวหนังสือ 17px และขนาดสมดุลกัน */
         .btn-style { 
             font-size: 17px; font-weight: bold; 
             display: flex; align-items: center; justify-content: center;
             height: 50px; width: 100%;
         }
+
+        /* เอฟเฟกต์กระพริบเมื่อถึงเป้า */
+        @keyframes blink-bg {
+            0%, 100% { background-color: #064e3b; color: #fff; }
+            50% { background-color: #10b981; color: #000; }
+        }
+        .target-reached {
+            animation: blink-bg 0.6s infinite;
+            border: 2px solid #fff;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 min-h-screen p-2 md:p-8">
     <div class="max-w-md mx-auto">
-        <!-- Header (Compact) -->
-        <div class="flex justify-between items-center mb-6">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-4">
             <h1 class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent italic">
                 BACCARAT DNA 256
             </h1>
@@ -38,8 +46,30 @@
             </div>
         </div>
 
-        <!-- Stats Grid (Compact) -->
-        <div class="grid grid-cols-3 gap-2 mb-6">
+        <!-- ระบบจัดการเงิน (ปรับปรุงใหม่ตามคำขอ) -->
+        <div class="bg-gray-800 p-3 rounded-2xl border border-gray-700 mb-4 shadow-lg">
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <div class="text-center">
+                    <p class="text-[9px] text-gray-400 uppercase mb-1">ทุนตั้งต้น</p>
+                    <input type="number" id="capital" value="4000" oninput="calculateProfit()" class="w-full bg-gray-900 border border-gray-600 rounded p-1 text-center text-yellow-500 font-bold text-lg">
+                </div>
+                <div class="text-center">
+                    <p class="text-[9px] text-gray-400 uppercase mb-1">เป้ากำไร %</p>
+                    <input type="number" id="targetPercent" value="15" oninput="calculateProfit()" class="w-full bg-gray-900 border border-gray-600 rounded p-1 text-center text-green-500 font-bold text-lg">
+                </div>
+            </div>
+            
+            <div class="mb-2">
+                <p class="text-[9px] text-gray-400 uppercase mb-1 text-center font-bold">ใส่ยอดเงินปัจจุบัน (จำนวนเต็ม)</p>
+                <input type="number" id="currentBalance" placeholder="เช่น 4600" oninput="calculateProfit()" class="w-full bg-blue-900/40 border-2 border-blue-500 rounded-xl p-2 text-center text-white font-black text-2xl shadow-inner">
+            </div>
+
+            <!-- แถบแจ้งเตือนกระพริบ -->
+            <div id="alertBox" class="hidden mt-2 p-3 rounded-xl text-center font-bold text-base"></div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-3 gap-2 mb-4">
             <div class="bg-gray-800 p-2 rounded-xl border border-gray-700 text-center shadow-lg">
                 <p class="text-gray-400 text-[9px] uppercase">Win Rate</p>
                 <p id="winRate" class="text-base font-bold text-yellow-500">0%</p>
@@ -54,23 +84,23 @@
             </div>
         </div>
 
-        <!-- DNA Table (15px) -->
-        <div class="bg-gray-800 p-3 rounded-2xl border border-gray-700 mb-6 shadow-xl">
+        <!-- DNA Table -->
+        <div class="bg-gray-800 p-3 rounded-2xl border border-gray-700 mb-4 shadow-xl">
             <h2 class="text-[10px] font-semibold mb-2 text-gray-400 uppercase tracking-widest italic">🧬 DNA Sequence</h2>
             <div id="dnaContainer" class="bg-gray-900/50 rounded-lg min-h-[45px]">
                 <p class="text-gray-600 italic text-[10px] w-full text-center">Waiting...</p>
             </div>
         </div>
 
-        <!-- Advice Box (Compact) -->
-        <div class="bg-gray-800 p-3 rounded-2xl border border-yellow-600/20 mb-6 flex justify-between items-center px-4 shadow-lg">
+        <!-- Advice Box -->
+        <div class="bg-gray-800 p-3 rounded-2xl border border-yellow-600/20 mb-4 flex justify-between items-center px-4 shadow-lg">
             <p class="text-[9px] text-gray-500 uppercase font-bold tracking-widest">Next:</p>
             <p id="nextBet" class="text-lg font-black text-yellow-400 uppercase tracking-widest">-</p>
             <p id="betReason" class="text-[10px] text-gray-500 italic">รอ 3 ตาแรก</p>
         </div>
 
-        <!-- Input & Control Buttons (17px) -->
-        <div class="space-y-2 mb-6">
+        <!-- Input & Control Buttons -->
+        <div class="space-y-2 mb-4">
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="addResult('P')" class="btn-style bg-blue-600 hover:bg-blue-500 rounded-xl shadow-lg active:scale-95 transition-all">PLAYER (P)</button>
                 <button onclick="addResult('B')" class="btn-style bg-red-600 hover:bg-red-700 rounded-xl shadow-lg active:scale-95 transition-all">BANKER (B)</button>
@@ -81,7 +111,7 @@
             </div>
         </div>
 
-        <!-- History P/B Only (Compact) -->
+        <!-- History Log -->
         <div class="bg-gray-800/50 rounded-2xl border border-gray-700 p-3">
             <h3 class="text-[9px] font-bold text-gray-500 uppercase mb-2 tracking-widest italic">Log (P/B)</h3>
             <div id="pbLog" class="flex flex-wrap gap-2 min-h-[24px] items-center justify-center">
@@ -92,6 +122,24 @@
 
     <script>
         let history = [];
+
+        function calculateProfit() {
+            const cap = parseFloat(document.getElementById('capital').value) || 0;
+            const targetPct = parseFloat(document.getElementById('targetPercent').value) || 0;
+            const currentBal = parseFloat(document.getElementById('currentBalance').value) || 0;
+            
+            const targetAmount = cap + (cap * targetPct / 100);
+            const profit = currentBal - cap;
+            const alertBox = document.getElementById('alertBox');
+
+            if (currentBal >= targetAmount && cap > 0) {
+                alertBox.innerHTML = `🏆 ครบเป้าหมายกำไร! +${profit.toLocaleString()} บาท<br>พักหรือหยุดเล่นเลยทันที!`;
+                alertBox.className = "block mt-2 p-3 rounded-xl text-center font-bold text-base target-reached";
+            } else {
+                alertBox.className = "hidden";
+            }
+        }
+
         const getPrediction = () => (history.length % 2 === 0 ? 'P' : 'B');
 
         function addResult(result) {
@@ -105,7 +153,6 @@
         }
 
         function updateUI() {
-            // DNA Update
             const dnaBox = document.getElementById('dnaContainer');
             dnaBox.innerHTML = history.length === 0 ? '<p class="text-gray-600 italic text-[10px] w-full text-center">Waiting...</p>' : '';
             
@@ -119,31 +166,27 @@
             });
             dnaBox.scrollLeft = dnaBox.scrollWidth;
 
-            // Stats Update
             document.getElementById('winRate').innerText = history.length > 0 ? Math.round((wins / history.length) * 100) + '%' : '0%';
             document.getElementById('conLoss').innerText = maxL;
             document.getElementById('patternIdx').innerText = (history.length % 256) + '/256';
 
-            // Advice Update
             const nextSide = getPrediction() === 'P' ? 'PLAYER' : 'BANKER';
             const nextBet = document.getElementById('nextBet');
-            const betReason = document.getElementById('betReason');
-
+            const nextSideThai = nextSide === 'PLAYER' ? 'PLAYER' : 'BANKER';
+            
             if (history.length < 3) {
                 nextBet.innerText = "-";
-                betReason.innerText = "รอ 3 ตาแรก";
+                document.getElementById('betReason').innerText = "รอ 3 ตาแรก";
             } else {
-                nextBet.innerText = nextSide;
-                nextBet.className = `text-xl font-black ${nextSide === 'PLAYER' ? 'text-blue-400' : 'text-red-400'}`;
+                nextBet.innerText = nextSideThai;
+                nextBet.className = `text-lg font-black ${nextSide === 'PLAYER' ? 'text-blue-400' : 'text-red-400'}`;
                 const last3 = history.slice(-3).map(h => h.isWin);
-                betReason.innerText = last3.every(v => v === false) ? "🔥 สวนสูตร!" : "ตามสูตรปกติ";
+                document.getElementById('betReason').innerText = last3.every(v => v === false) ? "🔥 สวนสูตร!" : "ตามสูตรปกติ";
             }
 
-            // Log P/B Update
             const logBox = document.getElementById('pbLog');
             logBox.innerHTML = '';
-            const recent = history.slice(-12); // แสดง 12 ตาล่าสุด
-            recent.forEach(item => {
+            history.slice(-12).forEach(item => {
                 const span = document.createElement('span');
                 span.className = `font-black text-base ${item.result === 'P' ? 'text-blue-500' : 'text-red-500'}`;
                 span.innerText = item.result;
@@ -152,7 +195,14 @@
             if (history.length === 0) logBox.innerHTML = '<p class="text-gray-700 italic text-[9px]">Waiting...</p>';
         }
 
-        function resetData() { if (confirm("ล้างข้อมูลทั้งหมด?")) { history = []; updateUI(); } }
+        function resetData() { 
+            if (confirm("ล้างข้อมูลทั้งหมด?")) { 
+                history = []; 
+                document.getElementById('currentBalance').value = '';
+                document.getElementById('alertBox').className = "hidden";
+                updateUI(); 
+            } 
+        }
     </script>
 </body>
 </html>
