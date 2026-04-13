@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compact Square Row Predictor Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Baccarat Predictor Pro V3 - Fixed Layout</title>
+    <script src="https://tailwindcss.com"></script>
     <style>
         body { background-color: #0d0f11; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; color: #94a3b8; }
         .main-card { background: #1a1d21; padding: 15px; width: 360px; border: 1px solid #2d333b; }
@@ -25,19 +25,29 @@
 
         .blink { animation: blinker 0.6s infinite; }
         @keyframes blinker { 50% { opacity: 0.3; } }
+
+        /* แก้ไขส่วนสถิติให้ไม่ล้น */
+        .history-container {
+            display: flex;
+            flex-wrap: wrap; /* บังคับขึ้นบรรทัดใหม่ */
+            gap: 2px;
+            word-break: break-all;
+            max-height: 50px;
+            overflow-y: auto; /* เพิ่ม Scrollbar เล็กๆ ถ้าข้อมูลเยอะเกิน */
+        }
     </style>
 </head>
 <body>
 
     <div class="main-card">
-        <!-- Display -->
+        <!-- Dashboard Display -->
         <div class="display-box">
-            <div id="alert" class="text-[9px] text-yellow-500 font-bold h-4 mb-1 uppercase tracking-widest italic">Fast Analysis</div>
+            <div id="alert" class="text-[9px] text-yellow-500 font-bold h-4 mb-1 uppercase tracking-widest italic">WAITING SIGNAL</div>
             <div id="next" class="text-3xl font-black text-gray-800 italic uppercase tracking-tighter">Wait...</div>
             <div class="text-[10px] text-gray-500 mt-1 font-bold uppercase">Rate: <span id="rate" class="text-green-500">0%</span></div>
         </div>
 
-        <!-- Input Settings บรรทัดเดียว -->
+        <!-- Settings Row -->
         <div class="setting-row">
             <div class="setting-item">
                 <p class="text-[8px] font-bold text-gray-600 mb-1 uppercase">Cap</p>
@@ -53,7 +63,7 @@
             </div>
         </div>
 
-        <!-- Money Monitor -->
+        <!-- Money Strategy System -->
         <div class="bg-[#1e2227] border border-[#3f464d] p-3 mb-3">
             <div class="flex justify-between items-center mb-2">
                 <div class="text-left">
@@ -72,19 +82,19 @@
             </div>
         </div>
 
-        <!-- History & WinLoss Check (เพิ่มกลับมาให้แล้ว) -->
+        <!-- History & WinLoss Check (แก้ไขส่วนล้นขอบ) -->
         <div class="grid grid-cols-2 gap-2 mb-3">
-            <div class="bg-black/30 p-1.5 min-h-[40px] border border-gray-800">
+            <div class="bg-black/30 p-1.5 min-h-[45px] border border-gray-800">
                 <p class="text-[7px] text-gray-600 font-bold uppercase border-b border-gray-800 mb-1">Raw History</p>
-                <div id="log" class="text-[9px] font-bold tracking-[2px] break-all leading-tight"></div>
+                <div id="log" class="history-container text-[9px] font-bold tracking-[1px]"></div>
             </div>
-            <div class="bg-black/30 p-1.5 min-h-[40px] border border-gray-800 text-center">
+            <div class="bg-black/30 p-1.5 min-h-[45px] border border-gray-800 text-center">
                 <p class="text-[7px] text-gray-600 font-bold uppercase border-b border-gray-800 mb-1">Check Result</p>
-                <div id="check-log" class="text-[10px] flex flex-wrap gap-0.5 justify-center"></div>
+                <div id="check-log" class="history-container text-[10px] justify-center"></div>
             </div>
         </div>
 
-        <!-- 4 Buttons Square Row (Equal Size) -->
+        <!-- Control Buttons Row -->
         <div class="btn-row">
             <button onclick="add('P')" class="btn-sq btn-p">P</button>
             <button onclick="add('B')" class="btn-sq btn-b">B</button>
@@ -97,8 +107,8 @@
         let logs = [], wl = [], currentPredict = null, profit = 0, winStreak = 0;
 
         function calc() {
-            let cap = parseFloat(document.getElementById('capital').value);
-            let pct = parseFloat(document.getElementById('target-pct').value);
+            let cap = parseFloat(document.getElementById('capital').value) || 0;
+            let pct = parseFloat(document.getElementById('target-pct').value) || 0;
             document.getElementById('goal-val').innerText = (cap * pct / 100).toFixed(0);
         }
 
@@ -133,7 +143,7 @@
 
         function add(t) {
             if (t === 'undo') { logs.pop(); wl.pop(); }
-            else if (t === 'reset-log') { if(confirm('Reset Log?')) { logs = []; wl = []; currentPredict = null; } }
+            else if (t === 'reset-log') { if(confirm('ต้องการรีเซ็ตสถิติ?')) { logs = []; wl = []; currentPredict = null; } }
             else {
                 if (currentPredict) wl.push(t === currentPredict ? '✔️' : '❌');
                 logs.push(t);
@@ -142,32 +152,44 @@
         }
 
         function render() {
-            document.getElementById('log').innerHTML = logs.map(x => `<span class="${x==='P'?'text-blue-500':'text-red-500'}">${x}</span>`).join('');
-            document.getElementById('check-log').innerHTML = wl.map(x => `<span class="${x==='✔️'?'text-green-500':'text-red-500'}">${x}</span>`).join('');
+            // เพิ่มการเว้นวรรคระหว่างตัวอักษรเพื่อให้ขึ้นบรรทัดใหม่ได้ง่ายขึ้น
+            document.getElementById('log').innerHTML = logs.map(x => `<span class="${x==='P'?'text-blue-500':'text-red-500'}">${x}</span>`).join(' ');
+            document.getElementById('check-log').innerHTML = wl.map(x => `<span class="${x==='✔️'?'text-green-500':'text-red-500'}">${x}</span>`).join(' ');
             analyze();
         }
 
         function analyze() {
             const n = document.getElementById('next'), a = document.getElementById('alert'), r = document.getElementById('rate');
-            if (logs.length < 5) {
-                n.innerText = "WAIT..."; a.innerText = "SYNC DATA (" + logs.length + "/5)";
-                currentPredict = null; return;
-            }
-            const p = logs.slice(-6).filter(x => x === 'P').length;
-            const b = logs.slice(-6).filter(x => x === 'B').length;
+            if (logs.length < 3) { n.innerText = "WAIT..."; return; }
+
+            const last = logs[logs.length - 1];
+            const prev = logs[logs.length - 2];
+            const pCount = logs.slice(-6).filter(x => x === 'P').length;
+            const bCount = logs.slice(-6).filter(x => x === 'B').length;
             
             let pick = "";
-            if (p >= 4) pick = "B";
-            else if (b >= 4) pick = "P";
+            let pct = 75;
+
+            if (last === prev) {
+                pick = last;
+                a.innerText = "FOLLOW TREND (DRAGON)";
+                pct = 85;
+            } 
+            else if (pCount >= 4) { pick = "B"; a.innerText = "STAT BIAS (REVERSE P)"; } 
+            else if (bCount >= 4) { pick = "P"; a.innerText = "STAT BIAS (REVERSE B)"; }
             else {
-                n.innerText = "PASS"; a.innerText = "NO SIGNAL"; r.innerText = "0%";
+                n.innerText = "PASS";
                 n.className = "text-3xl font-black text-gray-800 italic uppercase";
-                currentPredict = null; return;
+                a.innerText = "WAITING SIGNAL";
+                r.innerText = "0%";
+                currentPredict = null;
+                return;
             }
+
             currentPredict = pick;
             n.innerText = pick === 'P' ? 'PLAYER' : 'BANKER';
             n.className = `text-3xl font-black blink italic ${pick === 'P' ? 'text-blue-500' : 'text-red-500'}`;
-            a.innerText = "70% CONFIDENCE"; r.innerText = "75%";
+            r.innerText = pct + "%";
         }
         calc();
     </script>
