@@ -3,179 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Grey Predictor Dashboard</title>
+    <title>Compact Grey Predictor</title>
     <script src="https://tailwindcss.com"></script>
     <style>
-        body { 
-            background-color: #1a1c1e; /* สีพื้นหลังหน้าจอทั้งหมด */
-            font-family: sans-serif;
-            display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;
-            color: #e2e8f0;
-        }
-        .main-card {
-            background: #2d2f34; /* สีเทาเข้มของตัวการ์ด */
-            padding: 24px;
-            width: 380px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            border: 1px solid #3f4147;
-        }
-        /* จอพยากรณ์แบบ Deep Dark */
-        .display-box {
-            background: #121316;
-            border: 1px solid #3f4147;
-            margin-bottom: 15px;
-            padding: 20px;
-            text-align: center;
-        }
-        /* ปุ่มสี่เหลี่ยมจัตุรัส ขอบเหลี่ยมเป๊ะ */
-        .btn-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-        .square-btn {
-            aspect-ratio: 1 / 1;
-            border: none;
-            border-radius: 0px !important;
-            font-weight: bold;
-            font-size: 11px;
-            color: #ffffff;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: all 0.1s;
-        }
-        .square-btn:active { transform: translateY(2px); filter: brightness(1.2); }
-
-        .btn-p { background-color: #4b5563; border-bottom: 4px solid #374151; } 
-        .btn-b { background-color: #71717a; border-bottom: 4px solid #52525b; } 
-        .btn-u { background-color: #3f3f46; border-bottom: 4px solid #27272a; } 
-        .btn-r { background-color: #18181b; border-bottom: 4px solid #09090b; }
-
-        /* ช่องประวัติแบบคุมโทน */
-        .log-box {
-            background: #1e2024;
-            border: 1px solid #3f4147;
-            padding: 10px;
-            min-height: 55px;
-        }
-
+        body { background-color: #0f1113; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; color: #94a3b8; }
+        .main-card { background: #1a1d21; padding: 15px; width: 360px; border: 1px solid #2d333b; }
+        .display-box { background: #0d0f11; border: 1px solid #2d333b; margin-bottom: 10px; padding: 15px; text-align: center; }
+        
+        /* ช่อง Input บรรทัดเดียว */
+        .input-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px; }
+        .input-dark { background: #121417; border: 1px solid #3f464d; color: #fff; text-align: center; font-size: 11px; padding: 4px 2px; width: 100%; border-radius: 0; }
+        
+        /* ปุ่มสี่เหลี่ยมจัตุรัส */
+        .btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .square-btn { aspect-ratio: 1 / 1; border: none; border-radius: 0 !important; font-weight: bold; font-size: 11px; color: #fff; transition: 0.1s; cursor: pointer; }
+        .square-btn:active { transform: translateY(2px); }
+        
+        .btn-p { background-color: #1e40af; border-bottom: 4px solid #1e3a8a; } 
+        .btn-b { background-color: #991b1b; border-bottom: 4px solid #7f1d1d; } 
+        .btn-u { background-color: #4b5563; border-bottom: 4px solid #374151; } 
+        .btn-r { background-color: #18181b; border-bottom: 4px solid #000; }
+        
         .blink { animation: blinker 0.8s infinite; }
-        @keyframes blinker { 50% { opacity: 0.3; } }
+        @keyframes blinker { 50% { opacity: 0.2; } }
     </style>
 </head>
 <body>
 
     <div class="main-card">
-        <!-- Display Zone -->
+        <!-- Result Display -->
         <div class="display-box">
-            <div id="alert" class="text-[10px] text-yellow-500 font-bold h-4 mb-1 uppercase tracking-widest"></div>
-            <div id="next" class="text-3xl font-black text-gray-600 italic tracking-tighter">WAITING</div>
-            <div class="text-[10px] text-gray-500 mt-2 font-bold uppercase tracking-widest">
-                Chance: <span id="rate" class="text-blue-400">0%</span>
+            <div id="alert" class="text-[9px] text-blue-500 font-bold h-4 mb-1 uppercase tracking-widest italic">AI Analysis</div>
+            <div id="next" class="text-3xl font-black text-gray-800 italic uppercase">Wait...</div>
+            <div class="text-[10px] text-gray-500 mt-1">Confidence: <span id="rate" class="text-gray-700">0%</span></div>
+        </div>
+
+        <!-- ยุบรวมบรรทัดเดียว: Capital, Goal, Base -->
+        <div class="input-row">
+            <div>
+                <p class="text-[8px] uppercase font-bold text-center mb-0.5 text-gray-600">Capital</p>
+                <input type="number" id="capital" class="input-dark" value="1000" onchange="calc()">
+            </div>
+            <div>
+                <p class="text-[8px] uppercase font-bold text-center mb-0.5 text-gray-600">Goal %</p>
+                <input type="number" id="target-pct" class="input-dark" value="20" onchange="calc()">
+            </div>
+            <div>
+                <p class="text-[8px] uppercase font-bold text-center mb-0.5 text-gray-600">Base</p>
+                <input type="number" id="first-bet" class="input-dark" value="100" onchange="updateBet()">
             </div>
         </div>
 
-        <!-- History & WinLoss Tracker -->
-        <div class="grid grid-cols-2 gap-2 mb-4">
-            <div class="log-box">
-                <p class="text-[9px] font-bold text-gray-500 uppercase mb-1 border-b border-gray-700">History</p>
-                <div id="log" class="text-[10px] font-bold tracking-[2px] break-all text-gray-300"></div>
+        <!-- Money Status -->
+        <div class="bg-[#24292e] border border-[#3f464d] p-3 mb-3 text-center">
+            <div class="flex justify-between items-center mb-2">
+                <div class="text-left">
+                    <p class="text-[8px] font-bold text-gray-500 uppercase">Bet:</p>
+                    <p id="bet-amount" class="text-xl font-black text-yellow-500">100</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[8px] font-bold text-gray-500 uppercase">Profit / Target:</p>
+                    <p class="text-xs font-bold text-white"><span id="curr-profit" class="text-green-500">0</span> / <span id="goal-val">200</span></p>
+                </div>
             </div>
-            <div class="log-box">
-                <p class="text-[9px] font-bold text-gray-500 uppercase mb-1 border-b border-gray-700">Win/Loss</p>
-                <div id="check-log" class="text-[12px] flex flex-wrap gap-1"></div>
+            <div class="grid grid-cols-3 gap-1">
+                <button onclick="money('win')" class="bg-green-700 text-white text-[9px] py-1.5 font-bold uppercase">Win</button>
+                <button onclick="money('loss')" class="bg-red-800 text-white text-[9px] py-1.5 font-bold uppercase">Loss</button>
+                <button onclick="money('reset')" class="bg-gray-700 text-white text-[9px] py-1.5 font-bold uppercase">Reset</button>
             </div>
         </div>
 
-        <!-- 4 Square Buttons (Left to Right) -->
+        <!-- History/Check Tracking -->
+        <div class="grid grid-cols-2 gap-2 mb-3 h-10">
+            <div id="log" class="bg-black/30 border border-gray-800 p-1 text-[9px] font-bold tracking-widest break-all overflow-hidden text-center"></div>
+            <div id="check-log" class="bg-black/30 border border-gray-800 p-1 text-[10px] flex flex-wrap gap-0.5 justify-center overflow-hidden"></div>
+        </div>
+
+        <!-- Square Buttons: P B Undo Reset -->
         <div class="btn-grid">
-            <button onclick="add('P')" class="square-btn btn-p">PLAYER</button>
-            <button onclick="add('B')" class="square-btn btn-b">BANKER</button>
-            <button onclick="add('undo')" class="square-btn btn-u">UNDO</button>
-            <button onclick="add('reset')" class="square-btn btn-r">RESET</button>
-        </div>
-
-        <!-- Summary Bar -->
-        <div class="flex justify-between mt-4 text-[10px] font-bold text-gray-500 border-t border-gray-700 pt-3 uppercase tracking-tighter">
-            <span>WIN: <span id="win-count" class="text-green-500">0</span></span>
-            <span>LOSS: <span id="loss-count" class="text-red-500">0</span></span>
-            <span>TOTAL: <span id="total" class="text-white">0</span></span>
+            <button onclick="add('P')" class="square-btn btn-p">P</button>
+            <button onclick="add('B')" class="square-btn btn-b">B</button>
+            <button onclick="add('undo')" class="square-btn btn-u">Undo</button>
+            <button onclick="add('reset-log')" class="square-btn btn-r">Reset</button>
         </div>
     </div>
 
     <script>
-        let logs = [];
-        let currentPredict = null;
-        let winLoss = [];
-
-        function add(type) {
-            if (type === 'undo') {
-                logs.pop();
-                winLoss.pop();
-            } else if (type === 'reset') {
-                if(confirm('รีเซ็ตข้อมูลทั้งหมด?')) {
-                    logs = [];
-                    winLoss = [];
-                    currentPredict = null;
-                }
-            } else {
-                if (currentPredict) {
-                    winLoss.push(type === currentPredict ? '✔️' : '❌');
-                }
-                logs.push(type);
-            }
+        let logs = [], wl = [], current = null, profit = 0;
+        function calc() {
+            let cap = parseFloat(document.getElementById('capital').value);
+            let pct = parseFloat(document.getElementById('target-pct').value);
+            document.getElementById('goal-val').innerText = (cap * pct / 100).toFixed(0);
+        }
+        function updateBet() { document.getElementById('bet-amount').innerText = document.getElementById('first-bet').value; }
+        function money(act) {
+            let bet = parseFloat(document.getElementById('bet-amount').innerText);
+            let base = parseFloat(document.getElementById('first-bet').value);
+            if (act === 'win') { profit += bet; document.getElementById('bet-amount').innerText = bet * 2; }
+            else if (act === 'loss') { profit -= bet; document.getElementById('bet-amount').innerText = base; }
+            else { profit = 0; document.getElementById('bet-amount').innerText = base; }
+            document.getElementById('curr-profit').innerText = profit;
+            if (profit >= parseFloat(document.getElementById('goal-val').innerText) && profit > 0) alert("🎯 ถึงเป้าหมายแล้ว!");
+        }
+        function add(t) {
+            if (t === 'undo') { logs.pop(); wl.pop(); }
+            else if (t === 'reset-log') { if(confirm('Clear Log?')) { logs=[]; wl=[]; current=null; } }
+            else { if (current) wl.push(t === current ? '✔️' : '❌'); logs.push(t); }
             render();
         }
-
         function render() {
-            document.getElementById('total').innerText = logs.length;
-            document.getElementById('win-count').innerText = winLoss.filter(x => x === '✔️').length;
-            document.getElementById('loss-count').innerText = winLoss.filter(x => x === '❌').length;
-            
-            document.getElementById('log').innerHTML = logs.map(x => 
-                `<span class="${x === 'P' ? 'text-blue-400' : 'text-red-400'}">${x}</span>`
-            ).join('');
-
-            document.getElementById('check-log').innerHTML = winLoss.map(x => 
-                `<span class="${x === '✔️' ? 'text-green-500' : 'text-red-500'}">${x}</span>`
-            ).join('');
-
+            document.getElementById('log').innerHTML = logs.map(x => `<span class="${x==='P'?'text-blue-500':'text-red-500'}">${x}</span>`).join('');
+            document.getElementById('check-log').innerHTML = wl.map(x => `<span class="${x==='✔️'?'text-green-500':'text-red-500'}">${x}</span>`).join('');
             analyze();
         }
-
         function analyze() {
-            const next = document.getElementById('next');
-            const alertBox = document.getElementById('alert');
-            const rate = document.getElementById('rate');
-
-            if (logs.length < 3) {
-                next.innerText = "WAITING";
-                next.className = "text-3xl font-black text-gray-700 italic tracking-tighter";
-                currentPredict = null;
-                alertBox.innerText = ""; rate.innerText = "0%"; return;
-            }
-
-            const last3 = logs.slice(-3).join('');
-            let pick = "", msg = "", pct = 0;
-
-            if (logs.slice(-4).every(v => v === 'P')) { pick = "P"; msg = "Dragon P"; pct = 94; }
-            else if (logs.slice(-4).every(v => v === 'B')) { pick = "B"; msg = "Dragon B"; pct = 94; }
-            else if (last3 === 'PPB') { pick = "P"; msg = "2-Cut-1 Pattern"; pct = 87; }
-            else if (last3 === 'BBP') { pick = "B"; msg = "2-Cut-1 Pattern"; pct = 87; }
-
-            if (pick) {
-                currentPredict = pick;
-                next.innerText = pick === 'P' ? 'PLAYER' : 'BANKER';
-                next.className = `text-3xl font-black italic blink ${pick === 'P' ? 'text-blue-400' : 'text-red-400'}`;
-                alertBox.innerText = msg;
-                rate.innerText = pct + "%";
-            } else {
-                currentPredict = null;
-                next.innerText = "NEXT: ???";
-                next.className = "text-xl font-bold text-gray-600";
-                alertBox.innerText = ""; rate.innerText = "0%";
-            }
+            const n = document.getElementById('next'), a = document.getElementById('alert'), r = document.getElementById('rate');
+            if (logs.length < 8) { n.innerText = "WAIT..."; a.innerText = "SYNC (" + logs.length + "/8)"; current = null; return; }
+            const p = logs.slice(-10).filter(x => x === 'P').length;
+            const b = logs.slice(-10).filter(x => x === 'B').length;
+            if (p >= 7) { current = "B"; n.innerText = "BANKER"; n.className = "text-3xl font-black blink text-red-500 italic"; a.innerText = "REVERSE P"; r.innerText = "94%"; }
+            else if (b >= 7) { current = "P"; n.innerText = "PLAYER"; n.className = "text-3xl font-black blink text-blue-500 italic"; a.innerText = "REVERSE B"; r.innerText = "94%"; }
+            else { n.innerText = "PASS"; n.className = "text-3xl font-black text-gray-800 italic"; a.innerText = "NO SIGNAL"; r.innerText = "0%"; current = null; }
         }
+        calc();
     </script>
 </body>
 </html>
