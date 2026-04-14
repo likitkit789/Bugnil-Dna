@@ -3,38 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baccarat Predictor Pro V3 - Fixed Layout</title>
+    <title>Perfect Proportion Predictor</title>
     <script src="https://tailwindcss.com"></script>
     <style>
         body { background-color: #0d0f11; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; color: #94a3b8; }
         .main-card { background: #1a1d21; padding: 15px; width: 360px; border: 1px solid #2d333b; }
         .display-box { background: #000; border: 1px solid #333; margin-bottom: 10px; padding: 15px; text-align: center; }
         
+        /* ช่องกรอกข้อมูลบรรทัดเดียว */
         .setting-row { display: flex; gap: 4px; margin-bottom: 10px; }
         .setting-item { flex: 1; display: flex; flex-direction: column; align-items: center; }
         .input-dark { background: #121417; border: 1px solid #3f464d; color: #fff; text-align: center; font-size: 10px; width: 100%; padding: 4px 0; border-radius: 0; }
         
-        .btn-row { display: flex; gap: 6px; }
-        .btn-sq { flex: 1; aspect-ratio: 1 / 1; border: none; border-radius: 0 !important; font-weight: 900; font-size: 11px; color: #fff; cursor: pointer; transition: 0.1s; }
-        .btn-sq:active { transform: translateY(2px); }
+        /* ปุ่มทั้ง 4 ตัวให้เท่ากันเป๊ะ (Square Ratio) */
+        .btn-row { display: flex; gap: 8px; }
+        .btn-sq { 
+            flex: 1; 
+            aspect-ratio: 1 / 1; /* บังคับสี่เหลี่ยมจัตุรัส */
+            border: none; 
+            border-radius: 0 !important; 
+            font-weight: 900; 
+            font-size: 11px; 
+            color: #fff; 
+            cursor: pointer; 
+            transition: 0.1s; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+        }
+        .btn-sq:active { transform: translateY(3px); filter: brightness(1.2); }
         
-        .btn-p { background-color: #1e40af; border-bottom: 4px solid #1e3a8a; } 
-        .btn-b { background-color: #991b1b; border-bottom: 4px solid #7f1d1d; } 
+        /* สีตามสั่ง */
+        .btn-p { background-color: #1e40af; border-bottom: 4px solid #1e3a8a; } /* Blue */
+        .btn-b { background-color: #991b1b; border-bottom: 4px solid #7f1d1d; } /* Red */
         .btn-u { background-color: #4b5563; border-bottom: 4px solid #334155; }
         .btn-r { background-color: #18181b; border-bottom: 4px solid #000; }
 
+        /* ข้อความกระพริบ */
         .blink { animation: blinker 0.6s infinite; }
-        @keyframes blinker { 50% { opacity: 0.3; } }
-
-        /* แก้ไขส่วนสถิติให้ไม่ล้น */
-        .history-container {
-            display: flex;
-            flex-wrap: wrap; /* บังคับขึ้นบรรทัดใหม่ */
-            gap: 2px;
-            word-break: break-all;
-            max-height: 50px;
-            overflow-y: auto; /* เพิ่ม Scrollbar เล็กๆ ถ้าข้อมูลเยอะเกิน */
-        }
+        @keyframes blinker { 50% { opacity: 0.1; } }
+        
+        .history-container { display: flex; flex-wrap: wrap; gap: 2px; word-break: break-all; max-height: 45px; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -42,9 +52,10 @@
     <div class="main-card">
         <!-- Dashboard Display -->
         <div class="display-box">
-            <div id="alert" class="text-[9px] text-yellow-500 font-bold h-4 mb-1 uppercase tracking-widest italic">WAITING SIGNAL</div>
+            <!-- คำแนะนำที่กระพริบตลอดเวลา -->
+            <div id="alert" class="text-[9px] text-yellow-500 font-bold h-4 mb-1 uppercase tracking-widest italic blink">READY FOR NEXT ROUND</div>
             <div id="next" class="text-3xl font-black text-gray-800 italic uppercase tracking-tighter">Wait...</div>
-            <div class="text-[10px] text-gray-500 mt-1 font-bold uppercase">Rate: <span id="rate" class="text-green-500">0%</span></div>
+            <div class="text-[10px] text-gray-500 mt-1 font-bold uppercase">Conf: <span id="rate" class="text-green-500">0%</span></div>
         </div>
 
         <!-- Settings Row -->
@@ -59,47 +70,47 @@
             </div>
             <div class="setting-item">
                 <p class="text-[8px] font-bold text-gray-600 mb-1 uppercase">Base</p>
-                <input type="number" id="first-bet" class="input-dark" value="100" onchange="resetMoney()">
+                <input type="number" id="first-bet" class="input-dark" value="250" onchange="resetMoney()">
             </div>
         </div>
 
-        <!-- Money Strategy System -->
-        <div class="bg-[#1e2227] border border-[#3f464d] p-3 mb-3">
+        <!-- Money Strategy Monitor -->
+        <div class="bg-[#1e2227] border border-[#3f464d] p-3 mb-3 text-center">
             <div class="flex justify-between items-center mb-2">
                 <div class="text-left">
-                    <p class="text-[8px] font-bold text-gray-500 uppercase">Bet:</p>
-                    <p id="bet-amount" class="text-xl font-black text-yellow-500">100</p>
+                    <p class="text-[8px] font-bold text-gray-500 uppercase">Bet Now:</p>
+                    <p id="bet-amount" class="text-xl font-black text-yellow-500">250</p>
                 </div>
                 <div class="text-right">
-                    <p id="streak-info" class="text-[8px] font-bold text-blue-400 uppercase">Streak: 0</p>
+                    <p id="streak-info" class="text-[8px] font-bold text-blue-400 uppercase italic">Streak: 0</p>
                     <p class="text-xs font-bold text-white"><span id="curr-profit" class="text-green-400">0</span> / <span id="goal-val">200</span></p>
                 </div>
             </div>
             <div class="grid grid-cols-3 gap-1">
-                <button onclick="money('win')" class="bg-green-700 text-white text-[9px] py-2 font-bold uppercase">Win</button>
-                <button onclick="money('loss')" class="bg-red-800 text-white text-[9px] py-2 font-bold uppercase">Loss</button>
-                <button onclick="money('reset')" class="bg-gray-700 text-white text-[9px] py-2 font-bold uppercase">Reset</button>
+                <button onclick="money('win')" class="bg-green-700 text-white text-[9px] py-1.5 font-bold uppercase">Win</button>
+                <button onclick="money('loss')" class="bg-red-800 text-white text-[9px] py-1.5 font-bold uppercase">Loss</button>
+                <button onclick="money('reset')" class="bg-gray-700 text-white text-[9px] py-1.5 font-bold uppercase">Reset</button>
             </div>
         </div>
 
-        <!-- History & WinLoss Check (แก้ไขส่วนล้นขอบ) -->
+        <!-- History Display -->
         <div class="grid grid-cols-2 gap-2 mb-3">
-            <div class="bg-black/30 p-1.5 min-h-[45px] border border-gray-800">
+            <div class="bg-black/30 p-1 min-h-[40px] border border-gray-800">
                 <p class="text-[7px] text-gray-600 font-bold uppercase border-b border-gray-800 mb-1">Raw History</p>
                 <div id="log" class="history-container text-[9px] font-bold tracking-[1px]"></div>
             </div>
-            <div class="bg-black/30 p-1.5 min-h-[45px] border border-gray-800 text-center">
+            <div class="bg-black/30 p-1 min-h-[40px] border border-gray-800 text-center">
                 <p class="text-[7px] text-gray-600 font-bold uppercase border-b border-gray-800 mb-1">Check Result</p>
                 <div id="check-log" class="history-container text-[10px] justify-center"></div>
             </div>
         </div>
 
-        <!-- Control Buttons Row -->
+        <!-- 4 Square Buttons (สมส่วน 100%) -->
         <div class="btn-row">
             <button onclick="add('P')" class="btn-sq btn-p">P</button>
             <button onclick="add('B')" class="btn-sq btn-b">B</button>
-            <button onclick="add('undo')" class="btn-sq btn-u">UNDO</button>
-            <button onclick="add('reset-log')" class="btn-sq btn-r">RESET</button>
+            <button onclick="add('undo')" class="btn-sq btn-u">Undo</button>
+            <button onclick="add('reset-log')" class="btn-sq btn-r">Reset</button>
         </div>
     </div>
 
@@ -121,29 +132,32 @@
 
         function money(act) {
             let base = parseFloat(document.getElementById('first-bet').value);
-            let bet = parseFloat(document.getElementById('bet-amount').innerText);
+            let lastBet = parseFloat(document.getElementById('bet-amount').innerText);
 
             if (act === 'win') {
-                profit += bet; winStreak++;
+                profit += lastBet;
+                winStreak++;
+                // Compound Flush Logic: ชนะไม้ 2 แล้วเททบไม้ 3
                 if (winStreak >= 2) {
-                    document.getElementById('bet-amount').innerText = base + profit;
-                    document.getElementById('streak-info').innerText = "FLUSH PROFIT 🔥";
+                    document.getElementById('bet-amount').innerText = lastBet + lastBet;
+                    document.getElementById('streak-info').innerText = "FLUSH ON! 🔥";
                 } else {
                     document.getElementById('bet-amount').innerText = base;
                     document.getElementById('streak-info').innerText = `Streak: ${winStreak}`;
                 }
             } else if (act === 'loss') {
-                profit -= bet; winStreak = 0;
+                profit -= lastBet;
+                winStreak = 0;
                 document.getElementById('bet-amount').innerText = base;
                 document.getElementById('streak-info').innerText = "Streak: 0";
             } else { resetMoney(); }
             document.getElementById('curr-profit').innerText = profit;
-            if (profit >= parseFloat(document.getElementById('goal-val').innerText) && profit > 0) alert("🎯 ถึงเป้ากำไรแล้ว!");
+            if (profit >= parseFloat(document.getElementById('goal-val').innerText) && profit > 0) alert("🎯 ถึงเป้าหมายแล้ว!");
         }
 
         function add(t) {
             if (t === 'undo') { logs.pop(); wl.pop(); }
-            else if (t === 'reset-log') { if(confirm('ต้องการรีเซ็ตสถิติ?')) { logs = []; wl = []; currentPredict = null; } }
+            else if (t === 'reset-log') { if(confirm('ต้องการล้างประวัติ?')) { logs = []; wl = []; currentPredict = null; } }
             else {
                 if (currentPredict) wl.push(t === currentPredict ? '✔️' : '❌');
                 logs.push(t);
@@ -152,7 +166,6 @@
         }
 
         function render() {
-            // เพิ่มการเว้นวรรคระหว่างตัวอักษรเพื่อให้ขึ้นบรรทัดใหม่ได้ง่ายขึ้น
             document.getElementById('log').innerHTML = logs.map(x => `<span class="${x==='P'?'text-blue-500':'text-red-500'}">${x}</span>`).join(' ');
             document.getElementById('check-log').innerHTML = wl.map(x => `<span class="${x==='✔️'?'text-green-500':'text-red-500'}">${x}</span>`).join(' ');
             analyze();
@@ -162,34 +175,21 @@
             const n = document.getElementById('next'), a = document.getElementById('alert'), r = document.getElementById('rate');
             if (logs.length < 3) { n.innerText = "WAIT..."; return; }
 
-            const last = logs[logs.length - 1];
-            const prev = logs[logs.length - 2];
-            const pCount = logs.slice(-6).filter(x => x === 'P').length;
-            const bCount = logs.slice(-6).filter(x => x === 'B').length;
+            const last = logs[logs.length-1], prev = logs[logs.length-2];
+            const pC = logs.slice(-6).filter(x => x === 'P').length, bC = logs.slice(-6).filter(x => x === 'B').length;
             
             let pick = "";
-            let pct = 75;
-
-            if (last === prev) {
-                pick = last;
-                a.innerText = "FOLLOW TREND (DRAGON)";
-                pct = 85;
-            } 
-            else if (pCount >= 4) { pick = "B"; a.innerText = "STAT BIAS (REVERSE P)"; } 
-            else if (bCount >= 4) { pick = "P"; a.innerText = "STAT BIAS (REVERSE B)"; }
+            if (last === prev) { pick = last; a.innerText = "FOLLOW TREND (DRAGON)"; } 
+            else if (pC >= 4) { pick = "B"; a.innerText = "STAT BIAS (REVERSE P)"; } 
+            else if (bC >= 4) { pick = "P"; a.innerText = "STAT BIAS (REVERSE B)"; }
             else {
-                n.innerText = "PASS";
-                n.className = "text-3xl font-black text-gray-800 italic uppercase";
-                a.innerText = "WAITING SIGNAL";
-                r.innerText = "0%";
-                currentPredict = null;
-                return;
+                n.innerText = "PASS"; n.className = "text-3xl font-black text-gray-800 italic uppercase";
+                a.innerText = "WAITING SIGNAL"; r.innerText = "0%"; currentPredict = null; return;
             }
-
             currentPredict = pick;
             n.innerText = pick === 'P' ? 'PLAYER' : 'BANKER';
             n.className = `text-3xl font-black blink italic ${pick === 'P' ? 'text-blue-500' : 'text-red-500'}`;
-            r.innerText = pct + "%";
+            r.innerText = "75%";
         }
         calc();
     </script>
