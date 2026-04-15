@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfect Proportion Predictor</title>
+    <title>Perfect Square Predictor V6</title>
     <script src="https://tailwindcss.com"></script>
     <style>
         body { background-color: #0d0f11; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; color: #94a3b8; }
@@ -11,15 +11,15 @@
         .display-box { background: #000; border: 1px solid #333; margin-bottom: 10px; padding: 15px; text-align: center; }
         
         /* ช่องกรอกข้อมูลบรรทัดเดียว */
-        .setting-row { display: flex; gap: 4px; margin-bottom: 10px; }
-        .setting-item { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .setting-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 10px; }
+        .setting-item { display: flex; flex-direction: column; align-items: center; }
         .input-dark { background: #121417; border: 1px solid #3f464d; color: #fff; text-align: center; font-size: 10px; width: 100%; padding: 4px 0; border-radius: 0; }
         
-        /* ปุ่มทั้ง 4 ตัวให้เท่ากันเป๊ะ (Square Ratio) */
-        .btn-row { display: flex; gap: 8px; }
+        /* ปุ่ม 4 ปุ่มให้เท่ากันเป๊ะ สี่เหลี่ยมจัตุรัส */
+        .btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .btn-sq { 
-            flex: 1; 
             aspect-ratio: 1 / 1; /* บังคับสี่เหลี่ยมจัตุรัส */
+            width: 100%;
             border: none; 
             border-radius: 0 !important; 
             font-weight: 900; 
@@ -32,28 +32,24 @@
             justify-content: center;
             text-transform: uppercase;
         }
-        .btn-sq:active { transform: translateY(3px); filter: brightness(1.2); }
+        .btn-sq:active { transform: translateY(2px); filter: brightness(1.2); }
         
-        /* สีตามสั่ง */
         .btn-p { background-color: #1e40af; border-bottom: 4px solid #1e3a8a; } /* Blue */
         .btn-b { background-color: #991b1b; border-bottom: 4px solid #7f1d1d; } /* Red */
         .btn-u { background-color: #4b5563; border-bottom: 4px solid #334155; }
         .btn-r { background-color: #18181b; border-bottom: 4px solid #000; }
 
-        /* ข้อความกระพริบ */
         .blink { animation: blinker 0.6s infinite; }
         @keyframes blinker { 50% { opacity: 0.1; } }
-        
         .history-container { display: flex; flex-wrap: wrap; gap: 2px; word-break: break-all; max-height: 45px; overflow-y: auto; }
     </style>
 </head>
 <body>
 
     <div class="main-card">
-        <!-- Dashboard Display -->
+        <!-- Dashboard -->
         <div class="display-box">
-            <!-- คำแนะนำที่กระพริบตลอดเวลา -->
-            <div id="alert" class="text-[9px] text-yellow-500 font-bold h-4 mb-1 uppercase tracking-widest italic blink">READY FOR NEXT ROUND</div>
+            <div id="alert" class="text-[9px] text-yellow-500 font-bold h-4 mb-1 uppercase tracking-widest italic blink">READY</div>
             <div id="next" class="text-3xl font-black text-gray-800 italic uppercase tracking-tighter">Wait...</div>
             <div class="text-[10px] text-gray-500 mt-1 font-bold uppercase">Conf: <span id="rate" class="text-green-500">0%</span></div>
         </div>
@@ -61,28 +57,28 @@
         <!-- Settings Row -->
         <div class="setting-row">
             <div class="setting-item">
-                <p class="text-[8px] font-bold text-gray-600 mb-1 uppercase">Cap</p>
+                <p class="text-[7px] font-bold text-gray-600 mb-0.5 uppercase">Cap</p>
                 <input type="number" id="capital" class="input-dark" value="1000" onchange="calc()">
             </div>
             <div class="setting-item">
-                <p class="text-[8px] font-bold text-gray-600 mb-1 uppercase">Goal%</p>
+                <p class="text-[7px] font-bold text-gray-600 mb-0.5 uppercase">Goal%</p>
                 <input type="number" id="target-pct" class="input-dark" value="20" onchange="calc()">
             </div>
             <div class="setting-item">
-                <p class="text-[8px] font-bold text-gray-600 mb-1 uppercase">Base</p>
+                <p class="text-[7px] font-bold text-gray-600 mb-0.5 uppercase">Base</p>
                 <input type="number" id="first-bet" class="input-dark" value="250" onchange="resetMoney()">
             </div>
         </div>
 
-        <!-- Money Strategy Monitor -->
-        <div class="bg-[#1e2227] border border-[#3f464d] p-3 mb-3 text-center">
+        <!-- Money Monitor -->
+        <div class="bg-[#1e2227] border border-[#3f464d] p-3 mb-3">
             <div class="flex justify-between items-center mb-2">
                 <div class="text-left">
                     <p class="text-[8px] font-bold text-gray-500 uppercase">Bet Now:</p>
                     <p id="bet-amount" class="text-xl font-black text-yellow-500">250</p>
                 </div>
                 <div class="text-right">
-                    <p id="streak-info" class="text-[8px] font-bold text-blue-400 uppercase italic">Streak: 0</p>
+                    <p id="status-mode" class="text-[8px] font-bold text-blue-400 uppercase italic">Winning Mode</p>
                     <p class="text-xs font-bold text-white"><span id="curr-profit" class="text-green-400">0</span> / <span id="goal-val">200</span></p>
                 </div>
             </div>
@@ -93,7 +89,7 @@
             </div>
         </div>
 
-        <!-- History Display -->
+        <!-- History/Check Result -->
         <div class="grid grid-cols-2 gap-2 mb-3">
             <div class="bg-black/30 p-1 min-h-[40px] border border-gray-800">
                 <p class="text-[7px] text-gray-600 font-bold uppercase border-b border-gray-800 mb-1">Raw History</p>
@@ -105,8 +101,8 @@
             </div>
         </div>
 
-        <!-- 4 Square Buttons (สมส่วน 100%) -->
-        <div class="btn-row">
+        <!-- 4 Square Buttons (Equally Sized) -->
+        <div class="btn-grid">
             <button onclick="add('P')" class="btn-sq btn-p">P</button>
             <button onclick="add('B')" class="btn-sq btn-b">B</button>
             <button onclick="add('undo')" class="btn-sq btn-u">Undo</button>
@@ -127,37 +123,57 @@
             winStreak = 0; profit = 0;
             document.getElementById('bet-amount').innerText = document.getElementById('first-bet').value;
             document.getElementById('curr-profit').innerText = "0";
-            document.getElementById('streak-info').innerText = "Streak: 0";
+            document.getElementById('status-mode').innerText = "Winning Mode";
         }
 
         function money(act) {
             let base = parseFloat(document.getElementById('first-bet').value);
             let lastBet = parseFloat(document.getElementById('bet-amount').innerText);
+            let modeDisplay = document.getElementById('status-mode');
+            let betDisplay = document.getElementById('bet-amount');
 
             if (act === 'win') {
                 profit += lastBet;
                 winStreak++;
-                // Compound Flush Logic: ชนะไม้ 2 แล้วเททบไม้ 3
-                if (winStreak >= 2) {
-                    document.getElementById('bet-amount').innerText = lastBet + lastBet;
-                    document.getElementById('streak-info').innerText = "FLUSH ON! 🔥";
+
+                if (profit < 0) {
+                    modeDisplay.innerText = "Recovery Mode ⚠️";
+                    betDisplay.innerText = lastBet * 2;
                 } else {
-                    document.getElementById('bet-amount').innerText = base;
-                    document.getElementById('streak-info').innerText = `Streak: ${winStreak}`;
+                    if (modeDisplay.innerText.includes("Recovery")) {
+                        betDisplay.innerText = base;
+                        winStreak = 0;
+                        modeDisplay.innerText = "Recovered! ✅";
+                    } else {
+                        modeDisplay.innerText = "Winning Mode 💰";
+                        if (winStreak === 1) betDisplay.innerText = base * 2;
+                        else if (winStreak === 2) betDisplay.innerText = base * 4;
+                        else if (winStreak === 3) betDisplay.innerText = base * 4;
+                        else {
+                            betDisplay.innerText = base;
+                            winStreak = 0;
+                        }
+                    }
                 }
             } else if (act === 'loss') {
                 profit -= lastBet;
                 winStreak = 0;
-                document.getElementById('bet-amount').innerText = base;
-                document.getElementById('streak-info').innerText = "Streak: 0";
+                betDisplay.innerText = base;
+                modeDisplay.innerText = profit < 0 ? "Safe Mode (Neg)" : "Winning Mode";
             } else { resetMoney(); }
+
             document.getElementById('curr-profit').innerText = profit;
-            if (profit >= parseFloat(document.getElementById('goal-val').innerText) && profit > 0) alert("🎯 ถึงเป้าหมายแล้ว!");
+            
+            let goal = parseFloat(document.getElementById('goal-val').innerText);
+            if (profit >= goal && goal > 0) {
+                alert(`🎯 เป้าหมายสำเร็จ!\nกำไรสะสม: ${profit}`);
+                resetMoney();
+            }
         }
 
         function add(t) {
             if (t === 'undo') { logs.pop(); wl.pop(); }
-            else if (t === 'reset-log') { if(confirm('ต้องการล้างประวัติ?')) { logs = []; wl = []; currentPredict = null; } }
+            else if (t === 'reset-log') { if(confirm('Reset Log?')) { logs = []; wl = []; currentPredict = null; } }
             else {
                 if (currentPredict) wl.push(t === currentPredict ? '✔️' : '❌');
                 logs.push(t);
@@ -174,7 +190,6 @@
         function analyze() {
             const n = document.getElementById('next'), a = document.getElementById('alert'), r = document.getElementById('rate');
             if (logs.length < 3) { n.innerText = "WAIT..."; return; }
-
             const last = logs[logs.length-1], prev = logs[logs.length-2];
             const pC = logs.slice(-6).filter(x => x === 'P').length, bC = logs.slice(-6).filter(x => x === 'B').length;
             
